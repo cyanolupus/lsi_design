@@ -10,7 +10,7 @@ module count4 (clk, reset, dec, set, set_count, count);
     assign counter_inc = counter + 1'b1;
     assign counter_dec = counter - 1'b1;
 
-    always @(posedge clk or negedge reset) begin
+    always @(posedge clk or posedge set or negedge reset) begin
         if (~reset) begin
             counter <= 4'b0000;
         end else if (set) begin

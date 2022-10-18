@@ -8,6 +8,7 @@ module test_fetch();
 
     integer i;
 
+    wire v_o;
     reg stall_i;
     wire stall_o;
     wire [WORD -1: 0] inst_i;
@@ -23,6 +24,7 @@ module test_fetch();
     fetch_instruction fetch(
         .clk(clk),
         .reset(reset),
+        .v_o(v_o),
         .stall_i(stall_i),
         .stall_o(stall_o),
         .inst_i(inst_i),
@@ -50,13 +52,25 @@ module test_fetch();
         mem_write = 1'b0;
         mem_in = 32'h00000000;
 
-        #(STEP*2) reset = 1'b1;
+        #(STEP) reset = 1'b1;
 
         stall_i = 1'b0;
         branch = 1'b0;
         branch_addr = 16'h0000;
         
-        for (i = 0; i < 10; i = i + 1) begin
+        for (i = 0; i < 3; i = i + 1) begin
+            #(STEP);
+        end
+
+        stall_i = 1'b1;
+
+        for (i = 0; i < 3; i = i + 1) begin
+            #(STEP);
+        end
+
+        stall_i = 1'b0;
+
+        for (i = 0; i < 3; i = i + 1) begin
             #(STEP);
         end
 
@@ -67,7 +81,7 @@ module test_fetch();
 
         branch = 1'b0;
 
-        for (i = 0; i < 10; i = i + 1) begin
+        for (i = 0; i < 3; i = i + 1) begin
             #(STEP);
         end
 
@@ -76,6 +90,6 @@ module test_fetch();
 
     always @(posedge clk) begin
         $display("-------------------------------------------------------------");
-        $display("fetch_inst: %h", inst_o);
+        $display("next_addr: %h, fetch_inst: %h, v_o=%b", next_addr, inst_o, v_o);
     end
 endmodule

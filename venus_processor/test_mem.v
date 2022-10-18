@@ -2,13 +2,17 @@
 
 module test_mem();
     parameter STEP = 10;
+    parameter WORD = 32;
+    parameter ADDR = 16;
+    parameter LEN = 65535;
+
     integer i;
 
     reg clk, reset;
-    reg [15:0] mem_addr;
+    reg [ADDR -1: 0] mem_addr;
     reg mem_write;
-    reg [31:0] mem_in;
-    wire [31:0] mem_out;
+    reg [WORD -1: 0] mem_in;
+    wire [WORD -1: 0] mem_out;
 
     DP_mem32x64k mem_read(
         .clk(clk),

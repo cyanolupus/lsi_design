@@ -4,7 +4,7 @@ module fetch_instruction(clk, reset,
                 inst_i, inst_o, next_addr,
                 branch, branch_addr);
 
-    `include "./include/param.v"
+    `include "./include/params.v"
 
     input  clk, reset;
     output v_o;

@@ -2,7 +2,7 @@
 
 module test_fetch();
     parameter STEP = 10;
-    `include "./include/param.v"
+    `include "./include/params.v"
 
     integer i;
 

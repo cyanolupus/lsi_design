@@ -4,9 +4,7 @@ module fetch_instruction(clk, reset,
                 inst_i, inst_o, next_addr,
                 branch, branch_addr);
 
-    parameter WORD = 32;
-    parameter ADDR = 16;
-    parameter LEN = 65535;
+    `include "./include/param.v"
 
     input  clk, reset;
     output v_o;

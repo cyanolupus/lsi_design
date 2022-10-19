@@ -2,11 +2,9 @@ module DP_mem32x64k(clk,
                     A,
                     W,
                     D,
-                    Q
-                    );
-    parameter WORD = 32;
-    parameter ADDR = 16;
-    parameter LEN = 65535;
+                    Q);
+
+    `include "./include/param.v"
 
     input clk;
     input [ADDR -1: 0] A;

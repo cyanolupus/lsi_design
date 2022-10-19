@@ -2,9 +2,7 @@
 
 module test_mem();
     parameter STEP = 10;
-    parameter WORD = 32;
-    parameter ADDR = 16;
-    parameter LEN = 65535;
+    `include "./include/param.v"
 
     integer i;
 

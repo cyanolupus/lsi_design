@@ -1,4 +1,4 @@
-module g_registerx16(clk, reset,
+module g_reg_x16(clk, reset,
                     w_reserve_i,
                     r0_i,
                     r1_i,
@@ -40,8 +40,8 @@ module g_registerx16(clk, reset,
     assign opr_req0 = decode4to16(r0_i);
     assign opr_req1 = decode4to16(r1_i);
 
-    assign w_reserve = opr_req0 & 16{w_reserve_i};
-    assign wb_r = decode4to16(wb_r_i) & 16{wb_i};
+    assign w_reserve = opr_req0 & {16{w_reserve_i}};
+    assign wb_r = decode4to16(wb_r_i) & {16{wb_i}};
 
     g_reg_cell reg0(clk, reset, result_i, data1, w_reserve[0], w_reserved[0], wb_r[0]);
     g_reg_cell reg1(clk, reset, result_i, data2, w_reserve[1], w_reserved[1], wb_r[1]);

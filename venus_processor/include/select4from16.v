@@ -1,5 +1,5 @@
 function [W_OPR -1: 0] select4from16;
-      input [3: 0] select;
+      input [W_RD -1: 0] select;
 
       input [W_OPR -1: 0] data0, data1, data2, data3;
       input [W_OPR -1: 0] data4, data5, data6, data7;

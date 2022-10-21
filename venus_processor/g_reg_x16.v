@@ -62,11 +62,11 @@ module g_reg_x16(clk, reset,
 
     assign reserved_o = |((opr_req0 | opr_req1) & w_reserved);
 
-    assign r_opr0_o = select4from16(opr_req0, data1, data2, data3, data4,
+    assign r_opr0_o = select4from16(r0_i, data1, data2, data3, data4,
                                     data5, data6, data7, data8,
                                     data9, data10, data11, data12,
                                     data13, data14, data15, data16);
-    assign r_opr1_o = select4from16(opr_req1, data1, data2, data3, data4,
+    assign r_opr1_o = select4from16(r1_i, data1, data2, data3, data4,
                                     data5, data6, data7, data8,
                                     data9, data10, data11, data12,
                                     data13, data14, data15, data16);

@@ -20,13 +20,15 @@ module fetch_instruction(clk, reset,
     input [ADDR -1: 0] branch_addr;
 
     reg v_r;
+    reg [WORD -1: 0] inst_r;
     reg [ADDR -1: 0] pc_r;
+    reg stall_prev;
 
     wire [ADDR -1: 0] pc_next;
     wire [ADDR -1: 0] pc_prev;
 
-    assign inst_o = inst_i;
-    assign pc_o = pc_r;
+    assign inst_o = (stall_i)? inst_r: inst_i;
+    assign pc_o = (stall_i)? pc_prev: pc_r;
     assign pc_next = pc_r + 1;
     assign pc_prev = pc_r - 1;
     assign v_o = v_r;
@@ -36,22 +38,20 @@ module fetch_instruction(clk, reset,
         if (~reset) begin
             pc_r <= 0;
             v_r <= 0;
+            inst_r <= 0;
+            stall_prev <= 0;
         end else begin
             if (~stall_i) begin
                 if (branch) begin
+                    inst_r <= inst_i;
                     pc_r <= branch_addr;
                     v_r <= 0;
                 end else begin
+                    inst_r <= inst_i;
                     pc_r <= pc_next;
                     v_r <= 1;
                 end
             end
-        end
-    end
-
-    always @(posedge stall_i) begin
-        if (stall_i) begin
-            pc_r <= pc_prev;
         end
     end
 endmodule

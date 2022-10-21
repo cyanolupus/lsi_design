@@ -24,6 +24,11 @@ module test_decode();
     reg [W_OPR -1: 0] result_i;
     wire [W_RD -1: 0] wb_r_o;
 
+    wire w_reserve;
+    wire [W_RD -1: 0] r0, r1;
+    wire [W_OPR -1: 0] r_opr0, r_opr1;
+    wire reserved;
+
     reg clk, reset;
     reg mem_write;
     reg mem_in;
@@ -36,13 +41,30 @@ module test_decode();
         .stall_i(stall_i),
         .stall_o(stall_wire1),
         .inst_i(inst_o),
+        .w_reserve_o(w_reserve),
+        .r0_o(r0),
+        .r1_o(r1),
+        .r_opr0_i(r_opr0),
+        .r_opr1_i(r_opr1),
+        .reserved_i(reserved),
         .opecode_o(opecode_o),
         .opr0_o(opr0_o),
         .opr1_o(opr1_o),
+        .wb_r_o(wb_r_o)
+    );
+
+    g_reg_x16 register(
+        .clk(clk),
+        .reset(reset),
+        .w_reserve_i(w_reserve),
+        .r0_i(r0),
+        .r1_i(r1),
+        .r_opr0_o(r_opr0),
+        .r_opr1_o(r_opr1),
+        .reserved_o(reserved),
         .wb_i(wb_i),
         .wb_r_i(wb_r_i),
-        .result_i(result_i),
-        .wb_r_o(wb_r_o)
+        .result_i(result_i)
     );
 
     fetch_instruction fetch(

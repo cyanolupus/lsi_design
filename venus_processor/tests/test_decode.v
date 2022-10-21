@@ -13,7 +13,7 @@ module test_decode();
     wire stall_o;
     wire [WORD -1: 0] inst_i;
     wire [WORD -1: 0] inst_o;
-    wire [ADDR -1: 0] pc_o;
+    wire [ADDR -1: 0] mem_o;
     reg branch;
     reg [ADDR -1: 0] branch_addr;
 
@@ -28,6 +28,8 @@ module test_decode();
     wire [W_RD -1: 0] r0, r1;
     wire [W_OPR -1: 0] r_opr0, r_opr1;
     wire reserved;
+    wire [ADDR -1:0] pc_wire1;
+    wire [ADDR -1:0] pc_o;
 
     reg clk, reset;
     reg mem_write;
@@ -50,7 +52,9 @@ module test_decode();
         .opecode_o(opecode_o),
         .opr0_o(opr0_o),
         .opr1_o(opr1_o),
-        .wb_r_o(wb_r_o)
+        .wb_r_o(wb_r_o),
+        .pc_i(pc_wire1),
+        .pc_o(pc_o)
     );
 
     g_reg_x16 register(
@@ -75,14 +79,15 @@ module test_decode();
         .stall_o(stall_o),
         .inst_i(inst_i),
         .inst_o(inst_o),
-        .pc_o(pc_o),
+        .mem_o(mem_o),
+        .pc_o(pc_wire1),
         .branch(branch),
         .branch_addr(branch_addr)
     );
 
     test_decode_mem mem_read(
         .clk(clk),
-        .A(pc_o),
+        .A(mem_o),
         .W(mem_write),
         .D(mem_in),
         .Q(inst_i)
@@ -128,7 +133,7 @@ module test_decode();
 
     always @(posedge clk) begin
         $display("-------------------------------------------------------------");
-        $display("pc_o=%h, inst_o=%h, v_o=%b, stall_o=%b", pc_o, inst_o, v_wire1, stall_o);
-        $display("opc=%d, opr0=%h, opr1=%h, wb_r=%h, v_o=%b, stall_o=%b, stall_i=%b", opecode_o, opr0_o, opr1_o, wb_r_o, v_o, stall_wire1, stall_i);
+        $display("mem_o=%h, pc_o=%h, inst_o=%h, v_o=%b, stall_o=%b", mem_o, pc_wire1, inst_o, v_wire1, stall_o);
+        $display("pc_o=%h, opc=%d, opr0=%h, opr1=%h, wb_r=%h, v_o=%b, stall_o=%b, stall_i=%b", pc_o, opecode_o, opr0_o, opr1_o, wb_r_o, v_o, stall_wire1, stall_i);
     end
 endmodule

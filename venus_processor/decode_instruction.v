@@ -2,10 +2,11 @@ module decode_instruction(clk, reset,
                 v_i, v_o,
                 stall_i, stall_o,
                 inst_i,
+                pc_i, pc_o,
                 w_reserve_o, 
                 r0_o, r1_o,
                 r_opr0_i, r_opr1_i,
-                reserved_i,
+                imm_o, reserved_i,
                 opecode_o, opr0_o, opr1_o,
                 wb_r_o);
 
@@ -18,9 +19,12 @@ module decode_instruction(clk, reset,
     input stall_i;
     output stall_o;
     input [WORD -1: 0] inst_i;
+    input [ADDR -1: 0] pc_i;
+    output [ADDR -1: 0] pc_o;
     output w_reserve_o;
     output [W_RD -1: 0] r0_o, r1_o;
     input [W_OPR -1: 0] r_opr0_i, r_opr1_i;
+    output [W_IMM -1: 0] imm_o;
     input reserved_i;
     output [W_OPC -1: 0] opecode_o;
     output [W_OPR -1: 0] opr0_o, opr1_o;
@@ -32,6 +36,7 @@ module decode_instruction(clk, reset,
     reg [W_OPR -1: 0] imm_r;
     reg immf_r;
     reg reserved_r;
+    reg [ADDR -1: 0] pc_r;
 
     wire [W_OPC -1: 0] opecode;
     wire [W_IMM -1: 0] imm;
@@ -51,6 +56,8 @@ module decode_instruction(clk, reset,
     assign opr0_o = r_opr0_i;
     assign opr1_o = (immf_r)?imm_r:r_opr1_i;
     assign wb_r_o = wb_r_r;
+    assign imm_o = imm_r;
+    assign pc_o = pc_r;
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
@@ -59,6 +66,8 @@ module decode_instruction(clk, reset,
             wb_r_r <= 0;
             imm_r <= 0;
             immf_r <= 0;
+            reserved_r <= 0;
+            pc_r <= 0;
         end else begin
             if (~stall_i) begin
                 v_r <= v_i;
@@ -71,6 +80,7 @@ module decode_instruction(clk, reset,
                     imm_r <= {{16{1'b0}},imm};
                 end
                 reserved_r <= reserved_i;
+                pc_r <= pc_i;
             end else if (~reserved_i) begin
                 reserved_r <= 0;
             end

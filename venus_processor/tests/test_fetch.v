@@ -11,7 +11,7 @@ module test_fetch();
     wire stall_o;
     wire [WORD -1: 0] inst_i;
     wire [WORD -1: 0] inst_o;
-    wire [ADDR -1: 0] pc_o;
+    wire [ADDR -1: 0] mem_o;
     reg branch;
     reg [ADDR -1: 0] branch_addr;
 
@@ -27,14 +27,14 @@ module test_fetch();
         .stall_o(stall_o),
         .inst_i(inst_i),
         .inst_o(inst_o),
-        .pc_o(pc_o),
+        .mem_o(mem_o),
         .branch(branch),
         .branch_addr(branch_addr)
     );
 
     DP_mem32x64k mem_read(
         .clk(clk),
-        .A(pc_o),
+        .A(mem_o),
         .W(mem_write),
         .D(mem_in),
         .Q(inst_i)
@@ -88,6 +88,6 @@ module test_fetch();
 
     always @(posedge clk) begin
         $display("-------------------------------------------------------------");
-        $display("pc_o: %h, fetch_inst: %h, v_o=%b, stall_o=%b", pc_o, inst_o, v_o, stall_o);
+        $display("mem_o: %h, fetch_inst: %h, v_o=%b, stall_o=%b", mem_o, inst_o, v_o, stall_o);
     end
 endmodule

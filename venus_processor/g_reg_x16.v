@@ -60,7 +60,7 @@ module g_reg_x16(clk, reset,
     g_reg_cell reg14(clk, reset, result_i, data15, w_reserve[14], w_reserved[14], wb_r[14]);
     g_reg_cell reg15(clk, reset, result_i, data16, w_reserve[15], w_reserved[15], wb_r[15]);
 
-    assign reserved_o = (opr_req0 | opr_req1) & w_reserved;
+    assign reserved_o = |((opr_req0 | opr_req1) & w_reserved);
 
     assign r_opr0_o = select4from16(opr_req0, data1, data2, data3, data4,
                                     data5, data6, data7, data8,

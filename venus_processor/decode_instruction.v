@@ -45,7 +45,7 @@ module decode_instruction(clk, reset,
     assign imm = inst_i[W_IMM - 1: 0];
 
     assign stall_o = (stall_i & v_r) | reserved_r;
-    assign v_o = v_r;
+    assign v_o = v_r & (stall_i|~stall_o);
     assign opecode_o = opecode_r;
     assign opr0_o = reg0;
     assign opr1_o = (immf_r)?imm_r:reg1;

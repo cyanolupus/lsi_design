@@ -7,16 +7,16 @@ from: <https://www.ddna.cs.tsukuba.ac.jp/lecture/lsi_design/index.html>
 |1|◎||sub|SUBx|000_0001|immf|rd|rs|#16|rd = rd - (rs \| #16)|即値は符号拡張する|
 |2|○||mul|MULx|000_0010|immf|rd|rs|#16|rd = rd mul (rs \| #16)|即値は符号拡張する|
 |3|△||div|DIVx|000_0011|immf|rd|rs|#16|rd = rd div (rs \| #16)|即値は符号拡張する|
-|4|◎||compar|CMPx|000_0100|immf|rd|rs|#16|rd - (rs \| #16)|"即値は符号拡張する| rd は変化しない"|
+|4|◎||compar|CMPx|000_0100|immf|rd|rs|#16|rd - (rs \| #16)|即値は符号拡張する, rd は変化しない|
 |5|○||absolute|ABSx|000_0101|immf|rd|rs|#16|rd = abs(rs \| #16)|即値は符号拡張する|
 |6|△||add with carry|ADCx|000_0110|immf|rd|rs|#16|rd = rd + (rs \| #16) + carry|即値は符号拡張する|
 |7|△||sub widh carry|SBCx|000_0111|immf|rd|rs|#16|rd = rd - (rs \| #16) - carry|即値は符号拡張する|
-|8|◎|Shift|shift left|SHLx|000_1000|immf|rd|rs|#16|rd = rd << (rs \| #16)|"rs| #16 共有効なのは下位5bit| 即値は符号無し"|
-|9|◎||shift right|SHRx|000_1001|immf|rd|rs|#16|rd = rd >> (rs \| #16)|"rs| #16 共有効なのは下位5bit| 即値は符号無し"|
-|10|○||alithmetic shift|ASHx|000_1010|immf|rd|rs|#16|rd = rd >>> (rs \| #16)|"rs| #16 共有効なのは下位5bit| 即値は符号無し"|
+|8|◎|Shift|shift left|SHLx|000_1000|immf|rd|rs|#16|rd = rd << (rs \| #16)|rs, #16 共有効なのは下位5bit, 即値は符号無し|
+|9|◎||shift right|SHRx|000_1001|immf|rd|rs|#16|rd = rd >> (rs \| #16)|rs, #16 共有効なのは下位5bit, 即値は符号無し|
+|10|○||alithmetic shift|ASHx|000_1010|immf|rd|rs|#16|rd = rd >>> (rs \| #16)|rs, #16 共有効なのは下位5bit, 即値は符号無し|
 |11||||||||||||
-|12|△||rotate left|ROLx|000_1100|immf|rd|rs|#16|"rd = rotate_left(rd| (rs \| #16))"|"rs| #16 共有効なのは下位5bit| 即値は符号無し"|
-|13|△||rotate right|RORx|000_1101|immf|rd|rs|#16|"rd = rotate_right(rd| (rs \| #16))"|"rs| #16 共有効なのは下位5bit| 即値は符号無し"|
+|12|△||rotate left|ROLx|000_1100|immf|rd|rs|#16|"rd = rotate_left(rd\| (rs \| #16))"|rs, #16 共有効なのは下位5bit, 即値は符号無し|
+|13|△||rotate right|RORx|000_1101|immf|rd|rs|#16|"rd = rotate_right(rd\| (rs \| #16))"|rs, #16 共有効なのは下位5bit, 即値は符号無し|
 |14||||||||||||
 |15||||||||||||
 |16|◎|論理演算|and|AND|001_0000|0|rd|rs|-|rd = rd AND rs||
@@ -25,8 +25,8 @@ from: <https://www.ddna.cs.tsukuba.ac.jp/lecture/lsi_design/index.html>
 |19|○||exclucive or|XOR|001_0011|0|rd|rs|-|rd = XOR rs||
 |20||||||||||||
 |21||||||||||||
-|22|○||set low|SETL|001_0110|0|rd|-|#16|"rd = {rd[31:16]| #16}"||
-|23|○||set hi|SETH|001_0111|0|rd|-|#16|"rd = {#16| rd[15:0]}"||
+|22|○||set low|SETL|001_0110|1|rd|-|#16|"rd = {rd[31:16], #16}"||
+|23|○||set hi|SETH|001_0111|1|rd|-|#16|"rd = {#16, rd[15:0]}"||
 |24|◎|Load/Store|load|LD|001_1000|1|rd|rs|#16|rd = [rs + #16]|即値は符号付きとする|
 |25|◎||store|ST|001_1001|1|rs|rd|#16|[rd + #16}] = rs|即値は符号付きとする|
 |26||||||||||||

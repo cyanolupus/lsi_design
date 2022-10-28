@@ -3,7 +3,7 @@ module fetch_instruction(clk, reset,
                 stall_i, stall_o,
                 inst_i, inst_o, 
                 mem_o, pc_o,
-                branch, branch_addr);
+                branch_i, branch_addr_i);
 
     `include "./include/params.v"
 
@@ -18,8 +18,8 @@ module fetch_instruction(clk, reset,
     output [ADDR -1: 0] mem_o;
     output [ADDR -1: 0] pc_o;
 
-    input branch;
-    input [ADDR -1: 0] branch_addr;
+    input branch_i;
+    input [ADDR -1: 0] branch_addr_i;
 
     reg v_r;
     reg [WORD -1: 0] inst_r;
@@ -47,15 +47,13 @@ module fetch_instruction(clk, reset,
             pc_r <= 0;
         end else begin
             if (~stall_i) begin
-                if (branch) begin
-                    inst_r <= inst_i;
-                    mem_r <= branch_addr;
-                    pc_r <= mem_r;
+                inst_r <= inst_i;
+                pc_r <= mem_r;
+                if (branch_i) begin
+                    mem_r <= branch_addr_i;
                     v_r <= 0;
                 end else begin
-                    inst_r <= inst_i;
                     mem_r <= pc_next;
-                    pc_r <= mem_r;
                     v_r <= 1;
                 end
             end

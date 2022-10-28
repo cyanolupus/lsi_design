@@ -28,8 +28,8 @@ module test_fetch();
         .inst_i(inst_i),
         .inst_o(inst_o),
         .mem_o(mem_o),
-        .branch(branch),
-        .branch_addr(branch_addr)
+        .branch_i(branch),
+        .branch_addr_i(branch_addr)
     );
 
     DP_mem32x64k mem_read(

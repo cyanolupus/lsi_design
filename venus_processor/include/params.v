@@ -9,4 +9,4 @@ parameter W_IMM = 16;
 parameter REG_S = 16;
 parameter IMMF = 1;
 
-parameter D_INFO = 4;
+parameter D_INFO = 3;

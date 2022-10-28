@@ -7,7 +7,7 @@ module execute (clk, reset,
                 result_o, wb_r_o, wb_o)
 
     `include "./include/params.v"
-    `include "./include/select4from16.v"
+    `include "./include/select5from32.v"
 
     input  clk, reset;
     input  v_i;
@@ -39,8 +39,10 @@ module execute (clk, reset,
     wire [W_OPR -1: 0] result_absx;
     wire [W_OPR -1: 0] result_shift;
     wire [W_OPR -1: 0] result_ldst;
+    wire [W_OPR -1: 0] result_null;
     wire mem_write;
     wire [W_OPR -1: 0] mem_data;
+    wire [W_OPR -1: 0] result_tmp;
 
     exec_addx addx (opr0_i, opr1_i, result_addx, opecode_i[0]);
     exec_mulx mulx (opr0_i, opr1_i, result_mulx);

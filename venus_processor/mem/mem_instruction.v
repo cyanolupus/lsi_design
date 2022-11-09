@@ -1,4 +1,4 @@
-module mem_data(clk,
+module mem_instruction(clk,
                     A,
                     W,
                     D,

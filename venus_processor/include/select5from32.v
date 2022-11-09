@@ -7,7 +7,7 @@ function [W_OPR -1:0] select5from32;
     input [W_OPR - 1:0] result24, result25, result26, result27, result28, result29; // LD, ST, none, none, J, JA
     input [W_OPR - 1:0] result30, result31; // NOP, HLT
 
-    case (opecode)
+    case (select)
         5'b0_0000: select5from32 = result0;
         5'b0_0001: select5from32 = result1;
         5'b0_0010: select5from32 = result2;

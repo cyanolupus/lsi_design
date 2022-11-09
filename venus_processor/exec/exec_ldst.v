@@ -1,4 +1,5 @@
 module exec_ldst (opr0_i, opr1_i, imm_i, store_i, addr_o, write_o, data_o);
+    `include "./include/params.v"
     input [W_OPR -1: 0] opr0_i, opr1_i;
     input [W_IMM -1: 0] imm_i;
     input store_i;

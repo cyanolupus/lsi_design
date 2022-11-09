@@ -1,4 +1,5 @@
 module exec_absx (opr1_i, result_o);
+    `include "./include/params.v"
     input [W_OPR -1: 0] opr1_i;
     output [W_OPR -1: 0] result_o;
 

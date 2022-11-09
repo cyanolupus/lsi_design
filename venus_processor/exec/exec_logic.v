@@ -1,8 +1,10 @@
 module exec_logic (opr0_i, opr1_i, result_o, select_i);
+    `include "./include/params.v"
+    `include "./include/select2from4.v"
+    
     input [W_OPR -1: 0] opr0_i, opr1_i;
     output [W_OPR -1: 0] result_o;
     input [1:0] select_i;
-    `include "select2from4.v"
 
     wire [W_OPR -1: 0] and_pre;
     wire [W_OPR -1: 0] or_pre;

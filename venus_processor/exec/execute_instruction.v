@@ -22,6 +22,7 @@ module execute_instruction (clk, reset,
 
     input [W_OPC -1: 0] opecode_i;
     input [W_OPR -1: 0] opr0_i, opr1_i;
+    input wb_i;
     input [W_RD -1: 0] wb_r_i;
 
     output [ADDR -1: 0] ldst_addr_o;
@@ -86,7 +87,7 @@ module execute_instruction (clk, reset,
     assign stall_o = stall_i;
     assign result_o = (ld_r)?result_load:result_r;
     assign wb_r_o = wb_r_r;
-    assign wb_o = wb_r;
+    assign wb_o = wb_r & v_r;
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
@@ -99,8 +100,6 @@ module execute_instruction (clk, reset,
             zero_flag_r <= 0;
             sign_flag_r <= 0;
             overflow_flag_r <= 0;
-
-            opecode_r <= 0;
         end else begin
             if (~stall_i) begin
                 v_r <= v_i;
@@ -108,10 +107,10 @@ module execute_instruction (clk, reset,
                 wb_r_r <= wb_r_i;
                 wb_r <= 1'b1;
 
-                carry_flag_r <= addx.carry_flag_o;
-                zero_flag_r <= addx.zero_flag_o;
-                sign_flag_r <= addx.sign_flag_o;
-                overflow_flag_r <= addx.overflow_flag_o;
+                // carry_flag_r <= addx.carry_flag_o;
+                // zero_flag_r <= addx.zero_flag_o;
+                // sign_flag_r <= addx.sign_flag_o;
+                // overflow_flag_r <= addx.overflow_flag_o;
 
                 ld_r <= (opecode_i == 7'b1000000);
             end

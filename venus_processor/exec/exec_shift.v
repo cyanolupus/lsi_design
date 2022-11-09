@@ -1,4 +1,5 @@
-module exec_mulx (opr0_i, opr1_i, result_o, right_i, alith_i);
+module exec_shift (opr0_i, opr1_i, result_o, right_i, alith_i);
+    `include "./include/params.v"
     input [W_OPR -1: 0] opr0_i, opr1_i;
     output [W_OPR -1: 0] result_o;
     input right_i, alith_i;

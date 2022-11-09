@@ -1,6 +1,6 @@
 `timescale 1ns/100ps
 
-module test_decode();
+module test_exec();
     parameter STEP = 10;
     `include "./include/params.v"
 
@@ -13,7 +13,6 @@ module test_decode();
     reg mem_in;
     wire stall_o;
     wire v_o;
-    wire [ADDR -1:0] pc_o;
     wire branch_wire;
     wire [ADDR -1: 0] branch_addr_wire;
 
@@ -48,56 +47,30 @@ module test_decode();
     wire [W_OPR -1:0] ldst_data_mem_em, ldst_data_mem_me;
     wire ldst_write_em;
 
-    // execute - writeback
-    wire wb_ew;
-    wire [W_RD -1: 0] wb_r_ew;
-    wire [W_OPR -1: 0] result_ew;
-
-    // writeback - register
-    reg wb_i;
-    reg [W_RD -1: 0] wb_r_i;
-    reg [W_OPR -1: 0] result_i;
-
-// module execute_instruction (clk, reset,
-//                 v_i, v_o,
-//                 stall_i, stall_o,
-//                 pc_i, imm_i,
-//                 opecode_i, opr0_i, opr1_i,
-//                 wb_i, wb_r_i,
-//                 ldst_addr_o, ldst_write_o, 
-//                 ldst_data_i, ldst_data_o,
-//                 result_o, wb_r_o, wb_o,
-//                 branch_o, branch_addr_o);
+    // execute - register
+    wire v_er;
+    wire stall_re;
+    wire wb_er;
+    wire [W_RD -1: 0] wb_r_er;
+    wire [W_OPR -1: 0] result_er;
 
     execute_instruction exec(
-        .clk(clk),
-        .reset(reset),
-        .v_i(v_de),
-        .v_o(v_o),
-        .stall_i(stall_i),
-        .stall_o(stall_ed),
-        .pc_i(pc_de),
-        .imm_i(imm_de),
-        .opecode_i(opecode_de),
-        .opr0_i(opr0_de),
-        .opr1_i(opr1_de),
-        .wb_i(wb_de),
-        .wb_r_i(wb_r_de),
-        .ldst_addr_o(ldst_addr_em),
-        .ldst_write_o(ldst_write_em),
-        .ldst_data_i(ldst_data_mem_me),
-        .ldst_data_o(ldst_data_mem_em),
-        .result_o(result_ew),
-        .wb_r_o(wb_r_ew),
-        .wb_o(wb_ew),
-        .branch_o(branch_wire),
-        .branch_addr_o(branch_addr_wire)
+        .clk(clk), .reset(reset),
+        .v_i(v_de), .v_o(v_er),
+        .stall_i(stall_i), .stall_o(stall_ed),
+        .pc_i(pc_de), .imm_i(imm_de),
+        .opecode_i(opecode_de), .opr0_i(opr0_de), .opr1_i(opr1_de),
+        .wb_i(wb_de), .wb_r_i(wb_r_de),
+        .ldst_addr_o(ldst_addr_em), .ldst_write_o(ldst_write_em),
+        .ldst_data_i(ldst_data_mem_me), .ldst_data_o(ldst_data_mem_em),
+        .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
+        .branch_o(branch_wire), .branch_addr_o(branch_addr_wire)
     );
 
     mem_data mem_rw (
-        .clk(clk), .reset(reset),
+        .clk(clk),
         .A(ldst_addr_em), .W(ldst_write_em),
-        .D(ldst_data_mem_em), .Q(ldst_data_mem_me),
+        .D(ldst_data_mem_em), .Q(ldst_data_mem_me)
     );
 
     decode_instruction decode(
@@ -120,8 +93,8 @@ module test_decode();
         .r0_i(r0_dr), .r1_i(r1_dr),
         .r_opr0_o(r_opr0_rd), .r_opr1_o(r_opr1_rd),
         .reserved_o(reserved_rd),
-        .wb_i(wb_i), .wb_r_i(wb_r_i),
-        .result_i(result_i)
+        .wb_i(wb_er), .wb_r_i(wb_r_er),
+        .result_i(result_er)
     );
 
     fetch_instruction fetch(
@@ -130,11 +103,11 @@ module test_decode();
         .stall_i(stall_df), .stall_o(stall_o),
         .inst_i(inst_mf), .inst_o(inst_fd),
         .mem_o(addr_fm), .pc_o(pc_fd),
-        .branch(branch_wire), .branch_addr(branch_addr_wire)
+        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire)
     );
 
-    test_decode_mem mem_read(
-        .clk(clk), .reset(reset),
+    mem_instruction mem_read(
+        .clk(clk),
         .A(addr_fm), .W(mem_write),
         .D(mem_in), .Q(inst_mf)
     );
@@ -148,28 +121,20 @@ module test_decode();
         reset = 1'b0;
         mem_write = 1'b0;
         mem_in = 32'h00000000;
+        stall_i = 1'b0;
 
         #(STEP) reset = 1'b1;
-
-        stall_i = 1'b0;
-        branch = 1'b0;
-        branch_addr = 16'h0000;
         
         #(STEP);
         #(STEP);
         #(STEP);
         #(STEP);
-        stall_i = 1'b1;
-        #(STEP);
-        #(STEP);
-        stall_i = 1'b0;
         #(STEP);
         #(STEP);
         #(STEP);
         #(STEP);
-        wb_i = 1'b1;
-        wb_r_i = 4'h2;
-        result_i = 32'h89abcdef;
+        #(STEP);
+        #(STEP);
         #(STEP);
         #(STEP);
         #(STEP);
@@ -179,7 +144,8 @@ module test_decode();
 
     always @(posedge clk) begin
         $display("-------------------------------------------------------------");
-        $display("mem_o=%h, pc_o=%h, inst_o=%h, v_o=%b, stall_o=%b", mem_o, pc_fd, inst_o, v_fd, stall_o);
-        $display("pc_o=%h, opc=%d, opr0=%h, opr1=%h, wb_r=%h, v_o=%b, stall_o=%b, stall_i=%b", pc_o, opecode_o, opr0_o, opr1_o, wb_r_o, v_o, stall_df, stall_i);
+        $display("[  fetch] v=%b inst=%h, pc=%h, stall=%b", v_fd, inst_fd, pc_fd, stall_o);
+        $display("[ decode] v=%b opc=%h, opr0=%h, opr1=%h, pc=%h, stall=%b", v_de, opecode_de, opr0_de, opr1_de, pc_de, stall_df);
+        $display("[execute] v=%b result=%h, wb=%b, wb_r=%h, stall=%b", v_er, result_er, wb_er, wb_r_er, stall_ed);
     end
 endmodule

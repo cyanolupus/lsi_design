@@ -1,13 +1,10 @@
 module g_reg_x16(clk, reset,
-                    w_reserve_i,
-                    r0_i,
-                    r1_i,
-                    r_opr0_o,
-                    r_opr1_o,
-                    reserved_o,
-                    wb_i,
-                    wb_r_i,
-                    result_i);
+                w_reserve_i,
+                r0_i, r1_i,
+                r_opr0_o, r_opr1_o,
+                reserved_o,
+                wb_i, wb_r_i,
+                result_i);
 
     `include "./include/params.v"
     `include "./include/decode4to16.v"

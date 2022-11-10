@@ -66,7 +66,7 @@ module execute_instruction (clk, reset,
     exec_absx absx (opr0_i, result_absx);
     exec_shift shift (opr0_i, opr1_i, result_shift, opecode_i[0], opecode_i[1]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);
-    exec_branch branch (opr0_i, opr1_i, v_i, pc_i, opecode_i[0], carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
+    exec_branch branch (opr0_i, opr1_i, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
 
     // input [W_OPC - 3:0] select;
     // input [W_OPR - 1:0] result0, result1, result2, result3, result4, result5; // ADDx, SUBx, MULx, DIVx, (CMPx), ABSx
@@ -83,6 +83,7 @@ module execute_instruction (clk, reset,
         result_null, result_null, result_null, result_null, result_null, result_null,
         result_null, result_null);
 
+    assign result_null = {W_OPR{1'b0}};
     assign v_o = v_r;
     assign stall_o = stall_i;
     assign result_o = (ld_r)?result_load:result_r;
@@ -101,11 +102,14 @@ module execute_instruction (clk, reset,
             sign_flag_r <= 0;
             overflow_flag_r <= 0;
         end else begin
+            if (opecode_i == 7'b001_1111 & v_i) begin
+                $finish;
+            end
             if (~stall_i) begin
                 v_r <= v_i;
                 result_r <= selected_result;
                 wb_r_r <= wb_r_i;
-                wb_r <= 1'b1;
+                wb_r <= wb_i;
 
                 // carry_flag_r <= addx.carry_flag_o;
                 // zero_flag_r <= addx.zero_flag_o;

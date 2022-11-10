@@ -125,19 +125,9 @@ module test_exec();
 
         #(STEP) reset = 1'b1;
         
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
-        #(STEP);
+        for (i = 0; i < 15; i = i + 1) begin
+            #STEP;
+        end
 
         $finish;
     end
@@ -145,7 +135,7 @@ module test_exec();
     always @(posedge clk) begin
         $display("-------------------------------------------------------------");
         $display("[  fetch] v=%b inst=%h, pc=%h, stall=%b", v_fd, inst_fd, pc_fd, stall_o);
-        $display("[ decode] v=%b opc=%h, opr0=%h, opr1=%h, pc=%h, stall=%b", v_de, opecode_de, opr0_de, opr1_de, pc_de, stall_df);
-        $display("[execute] v=%b result=%h, wb=%b, wb_r=%h, stall=%b", v_er, result_er, wb_er, wb_r_er, stall_ed);
+        $display("[ decode] v=%b opc=%h, opr0=%d, opr1=%d, pc=%h, stall=%b", v_de, opecode_de, opr0_de, opr1_de, pc_de, stall_df);
+        $display("[execute] v=%b result=%d, wb=%b, wb_r=%d, stall=%b", v_er, result_er, wb_er, wb_r_er, stall_ed);
     end
 endmodule

@@ -34,12 +34,12 @@ module decode_instruction(clk, reset,
 
     reg v_r;
     reg [W_OPC -1: 0] opecode_r;
-    reg wb_r;
-    reg [W_RD -1: 0] wb_r_r;
     reg [W_OPR -1: 0] imm_r;
     reg immf_r;
-    reg reserved_r;
     reg [ADDR -1: 0] pc_r;
+    reg [W_OPR -1: 0] r0_r, r1_r;
+    reg w_reserve_r;
+    reg wb_r;
 
     wire [W_OPC -1: 0] opecode;
     wire [W_IMM -1: 0] imm;
@@ -48,30 +48,30 @@ module decode_instruction(clk, reset,
 
     assign opecode = inst_i[WORD -1: 1 + W_RD + W_RD + W_IMM];
     assign d_info = decode_inst(inst_i[WORD -1: W_RD + W_RD + W_IMM]);
-    assign r0_o = inst_i[W_RD + W_RD + W_IMM - 1: W_RD + W_IMM];
-    assign r1_o = inst_i[W_RD + W_IMM - 1: + W_IMM];
+    assign r0_o = r0_r;
+    assign r1_o = r1_r;
     assign imm = inst_i[W_IMM - 1: 0];
-
-    assign w_reserve_o = d_info[0] & v_i & ~reserved_r;
-    assign stall_o = (stall_i & v_r) | reserved_r;
-    assign v_o = v_r & (stall_i|~stall_o);
+    
+    assign w_reserve_o = w_reserve_r & ~reserved_i;
     assign opecode_o = opecode_r;
     assign opr0_o = r_opr0_i;
-    assign opr1_o = (immf_r)?imm_r:r_opr1_i;
-    assign wb_o = wb_r;
-    assign wb_r_o = wb_r_r;
+    assign opr1_o = immf_r?imm_r:r_opr1_i;
+    assign wb_o = v_r;
+    assign wb_r_o = r0_r;
     assign imm_o = imm_r;
     assign pc_o = pc_r;
+
+    assign stall_o = stall_i & v_r | reserved_i;
+    assign v_o = v_r & (~stall_o | stall_i);
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
             v_r <= 0;
             opecode_r <= 0;
-            wb_r <= 0;
-            wb_r_r <= 0;
             imm_r <= 0;
             immf_r <= 0;
-            reserved_r <= 0;
+            r0_r <= 0;
+            r1_r <= 0;
             pc_r <= 0;
         end else begin
             if (~stall_i) begin
@@ -81,18 +81,17 @@ module decode_instruction(clk, reset,
                     v_r <= v_i;
                 end
                 opecode_r <= opecode;
-                wb_r <= d_info[0];
-                wb_r_r <= r0_o;
+                r0_r <= inst_i[W_RD + W_RD + W_IMM - 1: W_RD + W_IMM];
+                r1_r <= inst_i[W_RD + W_IMM - 1: + W_IMM];
                 immf_r <= d_info[2];
+                w_reserve_r <= d_info[0] & v_i;
+                wb_r <= d_info[1] & v_i;
                 if (d_info[1]) begin
                     imm_r <= {{16{imm[15]}},imm};
                 end else begin
                     imm_r <= {{16{1'b0}},imm};
                 end
-                reserved_r <= reserved_i;
                 pc_r <= pc_i;
-            end else if (~reserved_i) begin
-                reserved_r <= 0;
             end
         end
     end

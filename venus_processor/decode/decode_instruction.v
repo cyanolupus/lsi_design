@@ -84,7 +84,7 @@ module decode_instruction(clk, reset,
                 r0_r <= inst_i[W_RD + W_RD + W_IMM - 1: W_RD + W_IMM];
                 r1_r <= inst_i[W_RD + W_IMM - 1: + W_IMM];
                 immf_r <= d_info[2];
-                w_reserve_r <= d_info[0] & v_i;
+                w_reserve_r <= d_info[0] & v_i & ~branch_i;
                 wb_r <= d_info[1] & v_i;
                 if (d_info[1]) begin
                     imm_r <= {{16{imm[15]}},imm};

@@ -6,7 +6,7 @@
 L1:
     mul r1 r2
     sub r1 r2
-    cmp r1 #10009
+    cmp r1 #10000
     jmpa r6 :L2
     jmpa r5 :L1
 

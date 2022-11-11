@@ -46,6 +46,11 @@ module execute_instruction (clk, reset,
     reg sign_flag_r;
     reg overflow_flag_r;
 
+    wire carry_flag_wire;
+    wire zero_flag_wire;
+    wire sign_flag_wire;
+    wire overflow_flag_wire;
+
     reg ld_r;
 
     wire [W_OPR -1: 0] result_addx;
@@ -67,6 +72,7 @@ module execute_instruction (clk, reset,
     exec_shift shift (opr0_i, opr1_i, result_shift, opecode_i[0], opecode_i[1]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);
     exec_branch branch (opr0_i, opr1_i, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
+    exec_cmp cmp (opr0_i, opr1_i, carry_flag_wire, zero_flag_wire, sign_flag_wire, overflow_flag_wire);
 
     // input [W_OPC - 3:0] select;
     // input [W_OPR - 1:0] result0, result1, result2, result3, result4, result5; // ADDx, SUBx, MULx, DIVx, (CMPx), ABSx
@@ -102,19 +108,21 @@ module execute_instruction (clk, reset,
             sign_flag_r <= 0;
             overflow_flag_r <= 0;
         end else begin
-            if (opecode_i == 7'b001_1111 & v_i) begin
-                $finish;
-            end
             if (~stall_i) begin
                 v_r <= v_i;
                 result_r <= selected_result;
                 wb_r_r <= wb_r_i;
                 wb_r <= wb_i;
 
-                // carry_flag_r <= addx.carry_flag_o;
-                // zero_flag_r <= addx.zero_flag_o;
-                // sign_flag_r <= addx.sign_flag_o;
-                // overflow_flag_r <= addx.overflow_flag_o;
+                if (opecode_i == 7'b001_1111 & v_i) begin
+                    $finish;
+                end
+                if (opecode_i == 7'b000_0100 & v_i) begin
+                    carry_flag_r <= carry_flag_wire;
+                    zero_flag_r <= zero_flag_wire;
+                    sign_flag_r <= sign_flag_wire;
+                    overflow_flag_r <= overflow_flag_wire;
+                end
 
                 ld_r <= (opecode_i == 7'b1000000);
             end

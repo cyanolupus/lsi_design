@@ -56,7 +56,7 @@ module decode_instruction(clk, reset,
     assign opecode_o = opecode_r;
     assign opr0_o = r_opr0_i;
     assign opr1_o = immf_r?imm_r:r_opr1_i;
-    assign wb_o = v_r;
+    assign wb_o = v_r & w_reserve_r;
     assign wb_r_o = r0_r;
     assign imm_o = imm_r;
     assign pc_o = pc_r;

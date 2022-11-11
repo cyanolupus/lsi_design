@@ -3,6 +3,9 @@ decode := $(shell ls -d decode/*.v | tr '\n' ' ')
 register := $(shell ls -d register/*.v | tr '\n' ' ')
 exec := $(shell ls -d exec/*.v | tr '\n' ' ')
 
+mem/memfiles/mem_instruction.dat: tests/test.vasm
+	python ../vasm/vasm.py tests/test.vasm > mem/memfiles/mem_instruction.dat
+
 test_exec: tests/test_exec.v mem/mem_data.v mem/mem_instruction.v $(fetch) $(register) $(decode) $(exec)
 	vcs -R $^
 

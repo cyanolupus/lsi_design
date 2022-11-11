@@ -1,0 +1,14 @@
+    add r1 #122
+    add r2 #100
+    add r5 #0
+    add r6 #2
+    sub r1 r2
+L1:
+    mul r1 r2
+    sub r1 r2
+    cmp r1 #10009
+    jmpa r6 :L2
+    jmpa r5 :L1
+
+L2:
+    hlt

@@ -26,8 +26,8 @@ function [D_INFO -1:0] decode_inst;
         7'b001_0110: decode_inst = {1'b0,1'b0,1'b1}; // SETL
         7'b001_0111: decode_inst = {1'b0,1'b0,1'b1}; // SETH
 
-        7'b001_1000: decode_inst = {1,1'b1,1'b1}; // LD
-        7'b001_1001: decode_inst = {1,1'b1,1'b0}; // ST
+        7'b001_1000: decode_inst = {1'b1,1'b1,1'b1}; // LD
+        7'b001_1001: decode_inst = {1'b1,1'b1,1'b0}; // ST
 
         7'b001_1100: decode_inst = {d[0],1'b1,1'b0}; // J
         7'b001_1101: decode_inst = {d[0],1'b1,1'b0}; // JA

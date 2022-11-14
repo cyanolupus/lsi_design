@@ -64,7 +64,6 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_absx;
     wire [W_OPR -1: 0] result_shift;
     wire [W_OPR -1: 0] result_logic;
-    wire [W_OPR -1: 0] result_load;
     wire [W_OPR -1: 0] result_null;
     wire [W_OPR -1: 0] selected_result;
 
@@ -102,7 +101,7 @@ module execute_instruction (clk, reset,
     assign result_null = {W_OPR{1'b0}};
     assign v_o = v_r;
     assign stall_o = stall_i;
-    assign result_o = (ld_r)?result_load:result_r;
+    assign result_o = (ld_r)?ldst_data_i:result_r;
     assign wb_r_o = wb_r_r;
     assign wb_o = wb_r & v_r;
 
@@ -112,6 +111,7 @@ module execute_instruction (clk, reset,
             result_r <= 0;
             wb_r_r <= 0;
             wb_r <= 0;
+            ld_r <= 0;
 
             carry_flag_r <= 0;
             zero_flag_r <= 0;
@@ -134,7 +134,7 @@ module execute_instruction (clk, reset,
                     overflow_flag_r <= overflow_flag_wire;
                 end
 
-                ld_r <= (opecode_i == 7'b1000000);
+                ld_r <= (opecode_i == 7'b001_1000);
             end
         end
     end

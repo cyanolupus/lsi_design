@@ -19,9 +19,10 @@ module mem_data(clk,
     assign Q = o_reg;
 
     always @(posedge clk) begin // or negedge rst)
-        if (W == 1'b1)
+        if (W == 1'b1) begin
             mem_bank[A] <= D; // write
-        else
+            $writememh("./mem/memfiles/mem_data.dat", mem_bank, 0, 2);
+        end else
             o_reg <= mem_bank[A]; //read
     end
 

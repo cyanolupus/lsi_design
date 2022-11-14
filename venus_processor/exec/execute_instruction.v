@@ -63,7 +63,7 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_null;
     wire [W_OPR -1: 0] selected_result;
 
-    exec_ldst ldst (opr0_i, opr1_i, imm_i, opecode_i[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+    exec_ldst ldst (v_i, opr0_i, opr1_i, imm_i, opecode_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
     exec_addx addx (opr0_i, opr1_i, result_addx, opecode_i[0]);
     exec_mulx mulx (opr0_i, opr1_i, result_mulx);

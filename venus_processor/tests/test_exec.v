@@ -143,11 +143,27 @@ module test_exec();
         $display("[  fetch] v=%b inst=%h, pc=%h, stall=%b", v_fd, inst_fd, pc_fd, stall_o);
         $display("[ decode] v=%b opc=%h, opr0=%d, opr1=%d, pc=%h, stall=%b", v_de, opecode_de, opr0_de, opr1_de, pc_de, stall_df);
         $display("[execute] v=%b result=%d, wb=%b, wb_r=%d, stall=%b flags=%b%b%b%b", v_er, result_er, wb_er, wb_r_er, stall_ed, exec.carry_flag_r, exec.zero_flag_r, exec.sign_flag_r, exec.overflow_flag_r);
-        if (v_er&wb_er&wb_r_er==2) begin
-            $display("[  value] r%h=%d", wb_r_er, result_er);
+        if (opecode_de == 7'b001_1111 & v_de) begin
+            $display("|----------------------------------dump---------------------------------|");
+            $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");
+            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", register.data1, register.data2, register.data3, register.data4, register.data5, register.data6, register.data7, register.data8);
+            $display("|-----------------------------------------------------------------------|");
+            $display("|      r8|      r9|      ra|      rb|      rc|      rd|      re|      rf|");
+            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", register.data9, register.data10, register.data11, register.data12, register.data13, register.data14, register.data15, register.data16);
+            $display("|-----------------------------------------------------------------------|");
+            $display("|  mem[0]|  mem[1]|  mem[2]|  mem[3]|  mem[4]|  mem[5]|  mem[6]|  mem[7]|");
+            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[0], mem_rw.mem_bank[1], mem_rw.mem_bank[2], mem_rw.mem_bank[3], mem_rw.mem_bank[4], mem_rw.mem_bank[5], mem_rw.mem_bank[6], mem_rw.mem_bank[7]);
+            $display("|-----------------------------------------------------------------------|");
+            $display("|  mem[8]|  mem[9]|  mem[a]|  mem[b]|  mem[c]|  mem[d]|  mem[e]|  mem[f]|");
+            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
+            $display("|-----------------------------------------------------------------------|");
         end
-        if (ldst_write_em) begin
-            $display("[   mem ] addr=%h, data=%h", ldst_addr_em, ldst_data_mem_em);
+        if (v_er&wb_er&(wb_r_er==2 | wb_r_er==1)) begin
+            $display("[  value] r%h=%d", wb_r_er, result_er);
         end
     end
 endmodule

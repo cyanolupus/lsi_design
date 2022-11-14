@@ -24,7 +24,5 @@ L3:
     store r5 r2 #1
     load r3 r5 #0
     load r4 r5 #1
-    add r1 r3
-    add r2 r4
     nop
     hlt

@@ -22,4 +22,5 @@ L3:
     add r1 #3
     store r5 r1 #0
     store r5 r2 #1
+    add r1 #3
     hlt

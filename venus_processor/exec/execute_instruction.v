@@ -59,9 +59,9 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_set;
 
     wire [W_FLAGS -1: 0] flags_addx;
-    wire [W_FLAGS -1: 0] flags_subx;
     wire [W_FLAGS -1: 0] flags_mulx;
     wire [W_FLAGS -1: 0] flags_divx;
+    wire [W_FLAGS -1: 0] flags_cmp;
     wire [W_FLAGS -1: 0] flags_absx;
     wire [W_FLAGS -1: 0] flags_shift;
     wire [W_FLAGS -1: 0] flags_logic;
@@ -88,9 +88,9 @@ module execute_instruction (clk, reset,
     exec_ldst ldst (opr0_i, opr1_i, immf_i, imm_i, stf_i & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
     exec_addx addx (opr0_i, opr1_or_imm, result_addx, opecode_i[0], flags_addx);
-    exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx);
-    exec_divx divx (opr0_i, opr1_or_imm, result_divx);
-    exec_cmp cmp (opr0_i, opr1_or_imm, carry_flag_wire, zero_flag_wire, sign_flag_wire, overflow_flag_wire);
+    exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
+    exec_divx divx (opr0_i, opr1_or_imm, result_divx, flags_divx);
+    exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);
     exec_absx absx (opr1_or_imm, result_absx);
     exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[1:0]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);

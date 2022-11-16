@@ -81,7 +81,7 @@ module execute_instruction (clk, reset,
     exec_divx divx (opr0_i, opr1_or_imm, result_divx);
     exec_cmp cmp (opr0_i, opr1_or_imm, carry_flag_wire, zero_flag_wire, sign_flag_wire, overflow_flag_wire);
     exec_absx absx (opr1_or_imm, result_absx);
-    exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[0], opecode_i[1]);
+    exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[1:0]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);
     exec_set set (opr0_i, imm_i, opecode_i[0], result_set);
     exec_branch branch (opr0_i, opr1_or_imm, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);

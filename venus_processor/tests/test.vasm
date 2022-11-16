@@ -1,28 +1,47 @@
-    add r7 #3
-    add r6 #2
-    add r5 #0
-    add r1 #1
-    add r2 #1
-L1:
-    add r1 #1
-    mul r2 r1
-    cmp r1 #10
-    jmpa r6 :L2
-    jmpa r5 :L1
+;     add r7 $3
+;     add r6 $2
+;     add r5 $0
+;     add r1 $1
+;     add r2 $1
+; L1:
+;     add r1 $1
+;     mul r2 r1
+;     cmp r1 $10
+;     jmpa r6 :L2
+;     jmpa r5 :L1
 
-L2:
-    div r2 #7
-    cmp r2 #7
-    jmpa r7 :L3
-    jmpa r5 :L2
-    hlt
+; L2:
+;     div r2 $7
+;     cmp r2 $7
+;     jmpa r7 :L3
+;     jmpa r5 :L2
+;     hlt
 
-L3:
-    add r1 #3
-    add r1 #3
-    store r5 r1 #0
-    store r5 r2 #1
-    load r3 r5 #0
-    load r4 r5 #1
-    nop
-    hlt
+; L3:
+;     add r1 $3
+;     add r1 $3
+;     store r5 r0 $0
+;     store r5 r1 $1
+;     load r3 r5 $0
+;     load r4 r5 $1
+;     nop
+;     hlt
+
+setl r1 $0b010
+setl r2 $0b101
+setl r3 $0b111
+setl r4 $0b110
+setl r5 $0b100
+setl r6 $0b001
+setl r7 $0b10000
+setl r8 $-1
+seth r8 $-1
+or r2 r1
+and r3 r1
+xor r4 r1
+not r5
+shl r6 $2
+shr r7 $3
+ash r8 $3
+nop
+hlt

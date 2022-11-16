@@ -139,10 +139,11 @@ module test_exec();
     end
 
     always @(posedge clk) begin
-        $display("-------------------------------------------------------------");
-        $display("[  fetch] v=%b inst=%h, pc=%h, stall=%b", v_fd, inst_fd, pc_fd, stall_o);
-        $display("[ decode] v=%b opc=%h, opr0=%d, opr1=%d, pc=%h, stall=%b", v_de, opecode_de, opr0_de, opr1_de, pc_de, stall_df);
-        $display("[execute] v=%b result=%d, wb=%b, wb_r=%d, stall=%b flags=%b%b%b%b", v_er, result_er, wb_er, wb_r_er, stall_ed, exec.carry_flag_r, exec.zero_flag_r, exec.sign_flag_r, exec.overflow_flag_r);
+        // $display("-------------------------------------------------------------");
+        // if (v_fd) $display("[  fetch] v=%b st=%b pc=%d inst=%h", v_fd, stall_o, pc_fd, inst_fd);
+        // if (v_de) $display("[ decode] v=%b st=%b pc=%d opc=%h rd=%h rs=%h imm=%h", v_de, stall_df, pc_de, opecode_de, r0_dr, r1_dr, imm_de);
+        // if (v_er) $display("[execute] v=%b st=%b br=%d wb=%b r%h=%d flags=%b%b%b%b", v_er, stall_ed, branch_addr_wire, wb_er, wb_r_er, result_er, exec.carry_flag_r, exec.zero_flag_r, exec.sign_flag_r, exec.overflow_flag_r);
+
         if (opecode_de == 7'b001_1111 & v_de) begin
             $display("|----------------------------------dump---------------------------------|");
             $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");
@@ -161,9 +162,6 @@ module test_exec();
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
             $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
             $display("|-----------------------------------------------------------------------|");
-        end
-        if (v_er&wb_er&(wb_r_er==2 | wb_r_er==1)) begin
-            $display("[  value] r%h=%d", wb_r_er, result_er);
         end
     end
 endmodule

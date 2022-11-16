@@ -70,6 +70,7 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] selected_result;
 
     wire [W_FLAGS -1: 0] flags_null;
+    wire [W_OPR -1: 0] selected_flags_pre;
     wire [W_FLAGS -1: 0] selected_flags;
 
     wire [W_CC -1: 0] cc;
@@ -83,6 +84,8 @@ module execute_instruction (clk, reset,
     assign imm_signed = immsign_i?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
     assign opr1_or_imm = immf_i ? imm_signed : opr1_i;
     assign opr1_or_imm_low = immf_i ? imm_signed[15:0] : opr1_i[15:0];
+
+    assign result_null = {W_OPR{1'b0}};
 
     exec_ldst ldst (opr0_i, opr1_i, immf_i, imm_i, stf_i & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
@@ -111,7 +114,15 @@ module execute_instruction (clk, reset,
         result_null, result_null, result_null, result_null, result_null, result_null,
         result_null, result_null);
 
-    assign result_null = {W_OPR{1'b0}};
+    assign selected_flags_pre = select5from32(opecode_i[4:0],
+        flags_addx, flags_addx, flags_mulx, flags_divx, flags_cmp, flags_absx,
+        flags_null, flags_null, flags_shift, flags_shift, flags_shift, flags_null,
+        flags_null, flags_null, flags_null, flags_null, flags_logic, flags_logic,
+        flags_logic, flags_logic, flags_null, flags_null, flags_null, flags_null,
+        flags_null, flags_null, flags_null, flags_null, flags_null, flags_null,
+        flags_null, flags_null);
+    assign selected_flags = selected_flags_pre[W_FLAGS - 1:0];
+
     assign v_o = v_r;
     assign stall_o = stall_i;
     assign result_o = (ld_r)?ldst_data_i:result_r;
@@ -136,15 +147,12 @@ module execute_instruction (clk, reset,
                 result_r <= selected_result;
                 wb_r_r <= wb_r_i;
                 wb_r <= wb_i;
+                flags_r <= selected_flags;
+                ld_r <= (opecode_i == 7'b001_1000);
 
                 if (opecode_i == 7'b001_1111 & v_i) begin
                     $finish;
                 end
-                if (opecode_i == 7'b000_0100 & v_i) begin
-                    flags_r <= selected_flags;
-                end
-
-                ld_r <= (opecode_i == 7'b001_1000);
             end
         end
     end

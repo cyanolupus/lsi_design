@@ -46,15 +46,7 @@ module execute_instruction (clk, reset,
     reg [W_RD -1: 0] wb_r_r;
     reg wb_r;
 
-    reg carry_flag_r;
-    reg zero_flag_r;
-    reg sign_flag_r;
-    reg overflow_flag_r;
-
-    wire carry_flag_wire;
-    wire zero_flag_wire;
-    wire sign_flag_wire;
-    wire overflow_flag_wire;
+    reg [W_FLAGS -1: 0] flags_r; // 0: carry, 1: zero, 2: sign, 3: overflow
 
     reg ld_r;
 
@@ -65,18 +57,37 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_shift;
     wire [W_OPR -1: 0] result_logic;
     wire [W_OPR -1: 0] result_set;
+
+    wire [W_FLAGS -1: 0] flags_addx;
+    wire [W_FLAGS -1: 0] flags_subx;
+    wire [W_FLAGS -1: 0] flags_mulx;
+    wire [W_FLAGS -1: 0] flags_divx;
+    wire [W_FLAGS -1: 0] flags_absx;
+    wire [W_FLAGS -1: 0] flags_shift;
+    wire [W_FLAGS -1: 0] flags_logic;
+    wire [W_FLAGS -1: 0] flags_set;
     
     wire [W_OPR -1: 0] result_null;
     wire [W_OPR -1: 0] selected_result;
 
+    wire [W_FLAGS -1: 0] flags_null;
+    wire [W_FLAGS -1: 0] selected_flags;
+
+    wire [W_CC -1: 0] cc;
+
     wire [W_OPR -1: 0] imm_signed;
-    assign imm_signed = immsign_i?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
     wire [W_OPR -1: 0] opr1_or_imm;
+    wire [W_OPR -1: 0] opr1_or_imm_low;
+
+    assign cc = opr0_i[W_CC -1:0];
+
+    assign imm_signed = immsign_i?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
     assign opr1_or_imm = immf_i ? imm_signed : opr1_i;
+    assign opr1_or_imm_low = immf_i ? imm_signed[15:0] : opr1_i[15:0];
 
-    exec_ldst ldst (opr0_i, opr1_i, immf_i, imm_signed, stf_i & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+    exec_ldst ldst (opr0_i, opr1_i, immf_i, imm_i, stf_i & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
-    exec_addx addx (opr0_i, opr1_or_imm, result_addx, opecode_i[0]);
+    exec_addx addx (opr0_i, opr1_or_imm, result_addx, opecode_i[0], flags_addx);
     exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx);
     exec_divx divx (opr0_i, opr1_or_imm, result_divx);
     exec_cmp cmp (opr0_i, opr1_or_imm, carry_flag_wire, zero_flag_wire, sign_flag_wire, overflow_flag_wire);
@@ -84,7 +95,7 @@ module execute_instruction (clk, reset,
     exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[1:0]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);
     exec_set set (opr0_i, imm_i, opecode_i[0], result_set);
-    exec_branch branch (opr0_i, opr1_or_imm, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
+    exec_branch branch (cc, opr1_or_imm_low, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
 
     // input [W_OPC - 3:0] select;
     // input [W_OPR - 1:0] result0, result1, result2, result3, result4, result5; // ADDx, SUBx, MULx, DIVx, (CMPx), ABSx
@@ -131,10 +142,7 @@ module execute_instruction (clk, reset,
                     $finish;
                 end
                 if (opecode_i == 7'b000_0100 & v_i) begin
-                    carry_flag_r <= carry_flag_wire;
-                    zero_flag_r <= zero_flag_wire;
-                    sign_flag_r <= sign_flag_wire;
-                    overflow_flag_r <= overflow_flag_wire;
+                    flags_r <= selected_flags;
                 end
 
                 ld_r <= (opecode_i == 7'b001_1000);

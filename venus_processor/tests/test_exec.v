@@ -10,7 +10,7 @@ module test_exec();
     reg clk, reset;
     reg stall_i;
     reg mem_write;
-    reg mem_in;
+    reg [WORD -1:0] mem_in;
     wire stall_o;
     wire v_o;
     wire branch_wire;

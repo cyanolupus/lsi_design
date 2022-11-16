@@ -6,14 +6,20 @@ parameter W_OPR = 32;
 parameter W_OPC = 7;
 parameter W_RD = 4;
 parameter W_IMM = 16;
-parameter W_FLAGS = 4;
 parameter W_CC = 3;
 
 parameter REG_S = 16;
 
+// FLAGS
+parameter W_FLAGS = 4;
+parameter F_CRRY = 0;
+parameter F_ZERO = 1;
+parameter F_SIGN = 2;
+parameter F_OVRF = 3;
+
 // DECODE INFO
 parameter W_EXEC = 4;
-parameter W_SELECT = 2;
+parameter W_SELECT = 3;
 
 parameter WRSV = 0;
 parameter SIGN = 1;

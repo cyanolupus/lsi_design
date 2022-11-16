@@ -1,5 +1,3 @@
-    setl r7 $3
-    setl r6 $2
     setl r5 $0
     setl r1 $1
     setl r2 $1
@@ -8,14 +6,14 @@ L1:
     mul r2 r1
     store r5 r2 $10
     cmp r1 $10
-    jmpa r6 :L2
-    jmpa r5 :L1
+    jz :L2
+    jmp :L1
 
 L2:
     div r2 $7
     cmp r2 $90
-    jmpa r7 :L3
-    jmpa r5 :L2
+    jb :L3
+    jmp :L2
     hlt
 
 L3:

@@ -80,16 +80,16 @@ module execute_instruction (clk, reset,
 
     exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[LSTF] & select[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
-    exec_addx addx (opr0_i, opr1_or_imm, result_addx, select, flags_r, flags_addx);
+    exec_addx addx (opr0_i, opr1_or_imm, result_addx, select[1:0], flags_r, flags_addx);
     exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
     exec_divx divx (opr0_i, opr1_or_imm, result_divx, flags_divx);
     exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);
     exec_absx absx (opr1_or_imm, result_absx, flags_absx);
-    exec_shift shift (opr0_i, opr1_or_imm, result_shift, select, flags_shift);
+    exec_shift shift (opr0_i, opr1_or_imm, result_shift, select[1:0], flags_shift);
     exec_rotate rotate (opr0_i, opr1_or_imm, result_rotate, select[0], flags_rotate);
-    exec_logic logic (opr0_i, opr1_i, result_logic, select, flags_logic);
+    exec_logic logic (opr0_i, opr1_i, result_logic, select[1:0], flags_logic);
     exec_set set (opr0_i, imm_i, select[0], result_set);
-    exec_branch branch (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select[0], flags_r, branch_o, branch_addr_o);
+    exec_branch branch (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select, flags_r, branch_o, branch_addr_o);
 
     // input [W_OPR -1: 0] data0, data1, data2, data3; // addx mulx divx cmp
     // input [W_OPR -1: 0] data4, data5, data6, data7; // absx none shift rotate

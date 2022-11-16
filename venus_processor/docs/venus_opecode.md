@@ -31,10 +31,17 @@ from: <https://www.ddna.cs.tsukuba.ac.jp/lecture/lsi_design/index.html>
 |25|◎||store|ST|001_1001|1|rs|rd|#16|[rd + #16}] = rs|即値は符号付きとする|
 |26||||||||||||
 |27||||||||||||
-|28|◎|分岐|jump|J|001_1100|immf|cc|rs|#16|if (cc) PC = PC + (rs \| #16)|即値は符号付きとする|
-|29|◎||jump absolute|JA|001_1101|immf|cc|rs|#16|if (cc) PC = (rs \| #16)|即値は符号付きとする|
+|28||||||||||||
+|29||||||||||||
 |30|◎|その他|no oparation|NOP|001_1110|0|-|-|-||何もしない|
 |31|△||halt|HLT|001_1111|0|-|-|-||パイプラインの動作を止める|
+|32|◎|分岐|jump|JMP|010_0000|immf|-|rs|#16|PC = (rs \| #16)|即値は符号付きとする|
+|33|◎||jump zero|JZ|010_0001|immf|-|rs|#16|if (zf) PC = (rs \| #16)|即値は符号付きとする|
+|34|◎||jump not zero|JNZ|010_0010|immf|-|rs|#16|if ~(zf) PC = (rs \| #16)|即値は符号付きとする|
+|35|◎||jump above|JA|010_0011|immf|-|rs|#16|if (~cf & ~zf) PC = (rs \| #16)|即値は符号付きとする|
+|36|◎||jump below|JB|010_0100|immf|-|rs|#16|if (cf) PC = (rs \| #16)|即値は符号付きとする|
+|38|◎||jump cc|JCC|010_0110|immf|cc|rs|#16|if (cc) PC = (rs \| #16)|即値は符号付きとする|
+|39|◎||jump relatively|JR|010_0111|immf|cc|rs|#16|if (cc) PC = PC + (rs \| #16)|即値は符号付きとする|
 
 ## 備考
 |acronym|name|meaning|

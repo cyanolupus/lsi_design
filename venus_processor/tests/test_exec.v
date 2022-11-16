@@ -135,8 +135,8 @@ module test_exec();
     always @(posedge clk) begin
         // $display("-------------------------------------------------------------");
         // if (v_fd) $display("[  fetch] v=%b st=%b pc=%d inst=%h", v_fd, stall_o, pc_fd, inst_fd);
-        // if (v_de) $display("[ decode] v=%b st=%b pc=%d opc=%h rd=%h rs=%h imm=%h d_info=%h", v_de, stall_df, pc_de, opecode_de, r0_dr, r1_dr, imm_de, d_info_de);
-        // if (v_er) $display("[execute] v=%b st=%b br=%d wb=%b r%h=%d flags=%b", v_er, stall_ed, branch_addr_wire, wb_er, wb_r_er, result_er, exec.flags_r);
+        // if (v_de) $display("[ decode] v=%b st=%b pc=%d rd=%h rs=%h imm=%h d_info=%h", v_de, stall_df, pc_de, r0_dr, r1_dr, imm_de, d_info_de);
+        // if (v_er) $display("[execute] v=%b st=%b br=%b,%d wb=%b r%h=%d flags=%b %b", v_er, stall_ed, branch_wire, branch_addr_wire, wb_er, wb_r_er, result_er, exec.flags_r, exec.branch.select_i);
 
         if (d_info_de[HLTF] & v_de) begin
             $display("|----------------------------------dump---------------------------------|");

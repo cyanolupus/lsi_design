@@ -1,6 +1,6 @@
 module exec_branch (cc, opr1_i,
                 pc_i, brf_i,
-                abs_i, flags_i,
+                select_i, flags_i,
                 branch_o, branch_addr_o);
 
     `include "./include/params.v"
@@ -10,15 +10,20 @@ module exec_branch (cc, opr1_i,
     input [ADDR -1: 0] opr1_i;
     input [ADDR -1: 0] pc_i;
     input brf_i;
-    input abs_i;
+    input [2:0] select_i;
     input [W_FLAGS -1: 0] flags_i;
     output branch_o;
     output [ADDR -1: 0] branch_addr_o;
 
-    wire condition;
+    wire cond_en = select_i[2] & select_i[1];
+    wire c_cc = select3from8(cc, 
+            1'b1, flags_i[F_ZERO], ~flags_i[F_SIGN], flags_i[F_SIGN], 
+            flags_i[F_CRRY], flags_i[F_OVRF], 1'b0, 1'b0) & cond_en;
+    wire c_select = select3from8(select_i,
+            1'b1, flags_i[F_ZERO], ~flags_i[F_ZERO], ~(flags_i[F_CRRY]|flags_i[F_ZERO]),
+            flags_i[F_CRRY], 1'b0, 1'b0, 1'b0) & ~cond_en;
+    wire relative = &select_i;
 
-    assign condition = select3from8(cc, 1'b1, flags_i[1], (~flags_i[2]), flags_i[2], flags_i[0], flags_i[3], 1'b0, 1'b0);
-
-    assign branch_o = brf_i & condition;
-    assign branch_addr_o = (abs_i)? opr1_i : (pc_i + opr1_i);
+    assign branch_o = brf_i & (c_cc | c_select);
+    assign branch_addr_o = (relative) ? (pc_i + opr1_i) : opr1_i;
 endmodule

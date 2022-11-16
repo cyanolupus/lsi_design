@@ -1,8 +1,8 @@
-    add r7 $3
-    add r6 $2
-    add r5 $0
-    add r1 $1
-    add r2 $1
+    setl r7 $3
+    setl r6 $2
+    setl r5 $0
+    setl r1 $1
+    setl r2 $1
 L1:
     add r1 $1
     mul r2 r1
@@ -25,5 +25,9 @@ L3:
     store r5 r1 $1
     load r3 r5 $0
     load r4 r5 $1
+    setl r10 $0xffff
+    seth r10 $0xffff
+    add r10 $1
+    adc r11 $1
     nop
     hlt

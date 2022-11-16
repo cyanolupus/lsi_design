@@ -1,11 +1,9 @@
 module execute_instruction (clk, reset,
                 v_i, v_o,
                 stall_i, stall_o,
-                pc_i, 
-                immf_i, immsign_i,
-                imm_i, stf_i,
+                pc_i, imm_i,
                 opecode_i, opr0_i, opr1_i,
-                wb_i, wb_r_i,
+                d_info_i, wb_i, wb_r_i,
                 ldst_addr_o, ldst_write_o, 
                 ldst_data_i, ldst_data_o,
                 result_o, wb_r_o, wb_o,
@@ -20,13 +18,11 @@ module execute_instruction (clk, reset,
     input stall_i;
     output stall_o;
     input [ADDR -1: 0] pc_i;
-    input immf_i;
-    input immsign_i;
     input [W_IMM -1: 0] imm_i;
-    input stf_i;
 
     input [W_OPC -1: 0] opecode_i;
     input [W_OPR -1: 0] opr0_i, opr1_i;
+    input [D_INFO -1: 0] d_info_i;
     input wb_i;
     input [W_RD -1: 0] wb_r_i;
 
@@ -85,13 +81,13 @@ module execute_instruction (clk, reset,
 
     assign cc = opr0_i[W_CC -1:0];
 
-    assign imm_signed = immsign_i?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
-    assign opr1_or_imm = immf_i ? imm_signed : opr1_i;
-    assign opr1_or_imm_low = immf_i ? imm_signed[15:0] : opr1_i[15:0];
+    assign imm_signed = d_info_i[SIGN]?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
+    assign opr1_or_imm = d_info_i[IMMF] ? imm_signed : opr1_i;
+    assign opr1_or_imm_low = d_info_i[IMMF] ? imm_signed[15:0] : opr1_i[15:0];
 
     assign result_null = {W_OPR{1'b0}};
 
-    exec_ldst ldst (opr0_i, opr1_i, immf_i, imm_i, stf_i & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+    exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[STF] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
     exec_addx addx (opr0_i, opr1_or_imm, result_addx, opecode_i[0], flags_addx);
     exec_adcx adcx (opr0_i, opr1_or_imm, result_adcx, opecode_i[0], flags_r, flags_adcx);
@@ -133,7 +129,7 @@ module execute_instruction (clk, reset,
     assign stall_o = stall_i;
     assign result_o = (ld_r)?ldst_data_i:result_r;
     assign wb_r_o = wb_r_r;
-    assign wb_o = wb_r & v_r;
+    assign wb_o = wb_r;
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin

@@ -10,6 +10,11 @@ parameter W_FLAGS = 4;
 parameter W_CC = 3;
 
 parameter REG_S = 16;
-parameter IMMF = 1;
+
+// DECODE INFO
+parameter STF = 0;
+parameter WRSV = 1;
+parameter SIGN = 2;
+parameter IMMF = 3;
 
 parameter D_INFO = 4;

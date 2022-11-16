@@ -40,10 +40,8 @@ module test_exec();
     wire wb_de;
     wire [W_RD -1: 0] wb_r_de;
     wire [ADDR -1:0] pc_de;
-    wire immf_de;
-    wire immsign_de;
     wire [W_IMM -1:0] imm_de;
-    wire stf_de;
+    wire [D_INFO -1:0] d_info_de;
 
     // execute - memory
     wire [ADDR -1:0] ldst_addr_em;
@@ -61,11 +59,9 @@ module test_exec();
         .clk(clk), .reset(reset),
         .v_i(v_de), .v_o(v_er),
         .stall_i(stall_i), .stall_o(stall_ed),
-        .pc_i(pc_de),
-        .immf_i(immf_de), .immsign_i(immsign_de),
-        .imm_i(imm_de), .stf_i(stf_de),
+        .pc_i(pc_de), .imm_i(imm_de),
         .opecode_i(opecode_de), .opr0_i(opr0_de), .opr1_i(opr1_de),
-        .wb_i(wb_de), .wb_r_i(wb_r_de),
+        .d_info_i(d_info_de), .wb_i(wb_de), .wb_r_i(wb_r_de),
         .ldst_addr_o(ldst_addr_em), .ldst_write_o(ldst_write_em),
         .ldst_data_i(ldst_data_mem_me), .ldst_data_o(ldst_data_mem_em),
         .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
@@ -87,10 +83,10 @@ module test_exec();
         .w_reserve_o(w_reserve_dr),
         .r0_o(r0_dr), .r1_o(r1_dr),
         .r_opr0_i(r_opr0_rd), .r_opr1_i(r_opr1_rd),
-        .immf_o(immf_de), .immsign_o(immsign_de),
-        .imm_o(imm_de), .stf_o(stf_de),
+        .imm_o(imm_de),
         .reserved_i(reserved_rd),
         .opecode_o(opecode_de), .opr0_o(opr0_de), .opr1_o(opr1_de),
+        .d_info_o(d_info_de),
         .wb_o(wb_de), .wb_r_o(wb_r_de), .branch_i(branch_wire)
     );
 

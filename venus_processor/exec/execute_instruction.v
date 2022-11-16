@@ -71,11 +71,11 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] selected_flags_pre;
     wire [W_FLAGS -1: 0] selected_flags;
 
-    wire [W_CC -1: 0] cc = opr0_i[W_CC -1:0];;
+    wire [W_CC -1: 0] cc = opr0_i[W_CC -1:0];
 
     wire [W_OPR -1: 0] imm_signed = d_info_i[SIGN]?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
     wire [W_OPR -1: 0] opr1_or_imm = d_info_i[IMMF] ? imm_signed : opr1_i;
-    wire [W_OPR -1: 0] opr1_or_imm_low = d_info_i[IMMF] ? imm_signed[15:0] : opr1_i[15:0];
+    wire [ADDR -1: 0] opr1_or_imm_low = d_info_i[IMMF] ? imm_signed[ADDR -1:0] : opr1_i[ADDR -1:0];
 
     wire [W_EXEC -1: 0] executor = d_info_i[D_INFO -1:D_INFO - W_EXEC];
     wire [W_SELECT -1: 0] select = d_info_i[D_INFO - W_EXEC -1:D_INFO - W_EXEC - W_SELECT];
@@ -91,7 +91,7 @@ module execute_instruction (clk, reset,
     exec_shift shift (opr0_i, opr1_or_imm, result_shift, select, flags_shift);
     exec_rotate rotate (opr0_i, opr1_or_imm, result_rotate, select[0], flags_rotate);
     exec_logic logic (opr0_i, opr1_i, result_logic, select, flags_logic);
-    exec_set set (opr0_i, imm_i, select[0]);
+    exec_set set (opr0_i, imm_i, select[0], result_set);
     exec_branch branch (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select[0], flags_r, branch_o, branch_addr_o);
 
     // input [W_OPR -1: 0] data0, data1, data2, data3; // addx mulx divx cmp

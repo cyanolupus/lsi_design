@@ -82,8 +82,7 @@ module execute_instruction (clk, reset,
 
     exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[LSTF] & select[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
-    exec_addx addx (opr0_i, opr1_or_imm, result_addx, select[0], flags_addx);
-    exec_adcx adcx (opr0_i, opr1_or_imm, result_adcx, select[0], flags_r, flags_adcx);
+    exec_addx addx (opr0_i, opr1_or_imm, result_addx, select, flags_r, flags_addx);
     exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
     exec_divx divx (opr0_i, opr1_or_imm, result_divx, flags_divx);
     exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);

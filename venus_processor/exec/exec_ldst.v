@@ -10,7 +10,6 @@ module exec_ldst (opr0_i, opr1_i, immf_i, imm_i, stf_i, addr_o, write_o, data_o)
 
     wire [ADDR -1: 0] load_addr;
     wire [ADDR -1: 0] store_addr;
-    wire [W_OPR -1: 0] data;
 
     assign load_addr = immf_i?(opr1_i + imm_i):opr1_i;
     assign store_addr = immf_i?(opr0_i + imm_i):opr0_i;

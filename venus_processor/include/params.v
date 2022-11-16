@@ -30,7 +30,6 @@ parameter MUL = 4'b0001;
 parameter DIV = 4'b0010;
 parameter CMP = 4'b0011;
 parameter ABS = 4'b0100;
-parameter ADC = 4'b0101;
 parameter SHT = 4'b0110;
 parameter ROT = 4'b0111;
 parameter LGC = 4'b1000;

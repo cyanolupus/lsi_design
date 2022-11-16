@@ -45,7 +45,6 @@ module execute_instruction (clk, reset,
     reg ld_r;
 
     wire [W_OPR -1: 0] result_addx;
-    wire [W_OPR -1: 0] result_adcx;
     wire [W_OPR -1: 0] result_mulx;
     wire [W_OPR -1: 0] result_divx;
     wire [W_OPR -1: 0] result_absx;
@@ -55,7 +54,6 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_set;
 
     wire [W_FLAGS -1: 0] flags_addx;
-    wire [W_FLAGS -1: 0] flags_adcx;
     wire [W_FLAGS -1: 0] flags_mulx;
     wire [W_FLAGS -1: 0] flags_divx;
     wire [W_FLAGS -1: 0] flags_cmp;
@@ -94,19 +92,19 @@ module execute_instruction (clk, reset,
     exec_branch branch (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select[0], flags_r, branch_o, branch_addr_o);
 
     // input [W_OPR -1: 0] data0, data1, data2, data3; // addx mulx divx cmp
-    // input [W_OPR -1: 0] data4, data5, data6, data7; // absx adcx shift rotate
+    // input [W_OPR -1: 0] data4, data5, data6, data7; // absx none shift rotate
     // input [W_OPR -1: 0] data8, data9, dataa, datab; // logic set none none
     // input [W_OPR -1: 0] datac, datad, datae, dataf; // none none none none
 
     assign selected_result = select4from16(executor,
         result_addx, result_mulx, result_divx, result_null,
-        result_absx, result_adcx, result_shift, result_rotate,
+        result_absx, result_null, result_shift, result_rotate,
         result_logic, result_set, result_null, result_null,
         result_null, result_null, result_null, result_null);
 
     assign selected_flags_pre = select4from16(executor,
         flags_addx, flags_mulx, flags_divx, flags_cmp,
-        flags_absx, flags_adcx, flags_shift, flags_rotate,
+        flags_absx, flags_null, flags_shift, flags_rotate,
         flags_logic, flags_null, flags_null, flags_null,
         flags_null, flags_null, flags_null, flags_null);
     

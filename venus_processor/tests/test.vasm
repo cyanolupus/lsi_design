@@ -2,16 +2,16 @@
     setl r1 $1
     setl r2 $1
 L1:
+    store r1 r2 $0
     add r1 $1
     mul r2 r1
-    store r5 r2 $10
-    cmp r1 $10
+    cmp r1 $13
     jz :L2
     jmp :L1
 
 L2:
     div r2 $7
-    cmp r2 $90
+    cmp r2 $7
     jb :L3
     jmp :L2
     hlt
@@ -19,10 +19,6 @@ L2:
 L3:
     add r1 $3
     add r1 $3
-    store r5 r0 $0
-    store r5 r1 $1
-    load r3 r5 $0
-    load r4 r5 $1
     setl r10 $0xffff
     seth r10 $0xffff
     add r10 $1

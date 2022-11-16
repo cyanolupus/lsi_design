@@ -17,8 +17,8 @@ module exec_shift (opr0_i, opr1_i, result_o, select_i, flags_o);
     wire [W_OPR -1: 0] result_over;
 
     assign opr1_pre = opr1_i[4:0];
-    assign opr0_pre_r = {opr0_i, W_OPR{1'b0}};
-    assign opr0_pre_l = {W_OPR{1'b0}, opr0_i};
+    assign opr0_pre_r = {opr0_i, {W_OPR{1'b0}}};
+    assign opr0_pre_l = {{W_OPR{1'b0}}, opr0_i};
     assign result_shl = opr0_pre_l << opr1_pre;
     assign result_shr = opr0_pre_r >> opr1_pre;
     assign result_ash = opr0_pre_r >>> opr1_pre;

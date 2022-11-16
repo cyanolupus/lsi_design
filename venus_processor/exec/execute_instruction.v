@@ -136,11 +136,7 @@ module execute_instruction (clk, reset,
             wb_r_r <= 0;
             wb_r <= 0;
             ld_r <= 0;
-
-            carry_flag_r <= 0;
-            zero_flag_r <= 0;
-            sign_flag_r <= 0;
-            overflow_flag_r <= 0;
+            flags_r <= 0;
         end else begin
             if (~stall_i) begin
                 v_r <= v_i;

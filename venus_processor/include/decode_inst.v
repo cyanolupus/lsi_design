@@ -8,15 +8,15 @@ function [D_INFO -1:0] decode_inst;
         7'b000_0011: decode_inst = {d[0],1'b1,1'b1,1'b0}; // DIVx impl o
         7'b000_0100: decode_inst = {d[0],1'b1,1'b0,1'b0}; // CMPx impl o
         7'b000_0101: decode_inst = {d[0],1'b1,1'b1,1'b0}; // ABSx impl o
-        7'b000_0110: decode_inst = {d[0],1'b1,1'b1,1'b0}; // ADCx 
-        7'b000_0111: decode_inst = {d[0],1'b1,1'b1,1'b0}; // SBCx
+        7'b000_0110: decode_inst = {d[0],1'b1,1'b1,1'b0}; // ADCx impl o
+        7'b000_0111: decode_inst = {d[0],1'b1,1'b1,1'b0}; // SBCx impl o
 
         7'b000_1000: decode_inst = {d[0],1'b0,1'b1,1'b0}; // SHLx impl o
         7'b000_1001: decode_inst = {d[0],1'b0,1'b1,1'b0}; // SHRx impl o
         7'b000_1010: decode_inst = {d[0],1'b0,1'b1,1'b0}; // ASHx impl o
         
-        7'b000_1100: decode_inst = {d[0],1'b0,1'b1,1'b0}; // ROLx
-        7'b000_1101: decode_inst = {d[0],1'b0,1'b1,1'b0}; // RORx
+        7'b000_1100: decode_inst = {d[0],1'b0,1'b1,1'b0}; // ROLx impl o
+        7'b000_1101: decode_inst = {d[0],1'b0,1'b1,1'b0}; // RORx impl o
 
         7'b001_0000: decode_inst = {1'b0,1'b0,1'b1,1'b0}; // AND impl o
         7'b001_0001: decode_inst = {1'b0,1'b0,1'b1,1'b0}; // OR impl o

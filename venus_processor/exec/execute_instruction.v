@@ -64,6 +64,8 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_absx;
     wire [W_OPR -1: 0] result_shift;
     wire [W_OPR -1: 0] result_logic;
+    wire [W_OPR -1: 0] result_set;
+    
     wire [W_OPR -1: 0] result_null;
     wire [W_OPR -1: 0] selected_result;
 
@@ -81,6 +83,7 @@ module execute_instruction (clk, reset,
     exec_absx absx (opr1_or_imm, result_absx);
     exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[0], opecode_i[1]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);
+    exec_set set (opr0_i, imm_i, opecode_i[0], result_set);
     exec_branch branch (opr0_i, opr1_or_imm, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
 
     // input [W_OPC - 3:0] select;
@@ -94,7 +97,7 @@ module execute_instruction (clk, reset,
         result_addx, result_addx, result_mulx, result_divx, result_null, result_absx,
         result_null, result_null, result_shift, result_shift, result_shift, result_null,
         result_null, result_null, result_null, result_null, result_logic, result_logic,
-        result_logic, result_logic, result_null, result_null, result_null, result_null,
+        result_logic, result_logic, result_null, result_null, result_set, result_set,
         result_null, result_null, result_null, result_null, result_null, result_null,
         result_null, result_null);
 

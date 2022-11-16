@@ -1,6 +1,6 @@
 function [D_INFO -1:0] decode_inst;
       input [W_OPC :0] d;
-      // {executor[5:0], immf, signed, w_reserve, stf}
+      // {executor[3:0], immf, signed, w_reserve, stf}
       case (d[W_OPC :1])
         7'b000_0000: decode_inst = {d[0],1'b1,1'b1,1'b0}; // ADDx impl o
         7'b000_0001: decode_inst = {d[0],1'b1,1'b1,1'b0}; // SUBx impl o

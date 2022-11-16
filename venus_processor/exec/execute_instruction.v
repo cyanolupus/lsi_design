@@ -3,7 +3,7 @@ module execute_instruction (clk, reset,
                 stall_i, stall_o,
                 pc_i, imm_i,
                 opecode_i, opr0_i, opr1_i,
-                d_info_i, wb_i, wb_r_i,
+                d_info_i, wb_r_i,
                 ldst_addr_o, ldst_write_o, 
                 ldst_data_i, ldst_data_o,
                 result_o, wb_r_o, wb_o,
@@ -23,7 +23,6 @@ module execute_instruction (clk, reset,
     input [W_OPC -1: 0] opecode_i;
     input [W_OPR -1: 0] opr0_i, opr1_i;
     input [D_INFO -1: 0] d_info_i;
-    input wb_i;
     input [W_RD -1: 0] wb_r_i;
 
     output [ADDR -1: 0] ldst_addr_o;
@@ -86,6 +85,7 @@ module execute_instruction (clk, reset,
     assign opr1_or_imm_low = d_info_i[IMMF] ? imm_signed[15:0] : opr1_i[15:0];
 
     assign result_null = {W_OPR{1'b0}};
+    assign flags_null = {W_FLAGS{1'b0}};
 
     exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[STF] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
@@ -129,7 +129,7 @@ module execute_instruction (clk, reset,
     assign stall_o = stall_i;
     assign result_o = (ld_r)?ldst_data_i:result_r;
     assign wb_r_o = wb_r_r;
-    assign wb_o = wb_r;
+    assign wb_o = v_r & wb_r;
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
@@ -144,7 +144,7 @@ module execute_instruction (clk, reset,
                 v_r <= v_i;
                 result_r <= selected_result;
                 wb_r_r <= wb_r_i;
-                wb_r <= wb_i;
+                wb_r <= d_info_i[WRSV];
                 flags_r <= selected_flags;
                 ld_r <= (opecode_i == 7'b001_1000);
 

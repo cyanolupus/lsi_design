@@ -10,7 +10,7 @@ module decode_instruction(clk, reset,
                 reserved_i,
                 opecode_o, opr0_o, opr1_o,
                 d_info_o,
-                wb_o, wb_r_o, branch_i);
+                wb_r_o, branch_i);
 
     `include "./include/params.v"
     `include "./include/decode_inst.v"
@@ -31,7 +31,6 @@ module decode_instruction(clk, reset,
     output [W_OPC -1: 0] opecode_o;
     output [W_OPR -1: 0] opr0_o, opr1_o;
     output [D_INFO -1: 0] d_info_o;
-    output wb_o;
     output [W_RD -1: 0] wb_r_o;
     input branch_i;
 
@@ -44,7 +43,6 @@ module decode_instruction(clk, reset,
 
     wire [W_OPC -1: 0] opecode;
     wire [W_IMM -1: 0] imm;
-    wire reserved;
     wire [D_INFO -1: 0] d_info;
 
     assign opecode = inst_i[WORD -1: 1 + W_RD + W_RD + W_IMM];
@@ -57,7 +55,6 @@ module decode_instruction(clk, reset,
     assign opecode_o = opecode_r;
     assign opr0_o = r_opr0_i;
     assign opr1_o = r_opr1_i;
-    assign wb_o = v_r & d_info_r[WRSV];
     assign wb_r_o = r0_r;
     assign imm_o = imm_r;
     assign pc_o = pc_r;
@@ -77,11 +74,7 @@ module decode_instruction(clk, reset,
             d_info_r <= 0;
         end else begin
             if (~stall_i) begin
-                if (branch_i) begin
-                    v_r <= 0;
-                end else begin
-                    v_r <= v_i;
-                end
+                v_r <= v_i & ~branch_i;
                 opecode_r <= opecode;
                 r0_r <= inst_i[W_RD + W_RD + W_IMM - 1: W_RD + W_IMM];
                 r1_r <= inst_i[W_RD + W_IMM - 1: + W_IMM];

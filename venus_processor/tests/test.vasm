@@ -6,13 +6,14 @@
 L1:
     add r1 $1
     mul r2 r1
+    store r5 r2 $10
     cmp r1 $10
     jmpa r6 :L2
     jmpa r5 :L1
 
 L2:
     div r2 $7
-    cmp r2 $7
+    cmp r2 $90
     jmpa r7 :L3
     jmpa r5 :L2
     hlt

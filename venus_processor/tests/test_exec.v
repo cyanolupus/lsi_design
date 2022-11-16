@@ -61,7 +61,7 @@ module test_exec();
         .stall_i(stall_i), .stall_o(stall_ed),
         .pc_i(pc_de), .imm_i(imm_de),
         .opecode_i(opecode_de), .opr0_i(opr0_de), .opr1_i(opr1_de),
-        .d_info_i(d_info_de), .wb_i(wb_de), .wb_r_i(wb_r_de),
+        .d_info_i(d_info_de), .wb_r_i(wb_r_de),
         .ldst_addr_o(ldst_addr_em), .ldst_write_o(ldst_write_em),
         .ldst_data_i(ldst_data_mem_me), .ldst_data_o(ldst_data_mem_em),
         .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
@@ -87,7 +87,7 @@ module test_exec();
         .reserved_i(reserved_rd),
         .opecode_o(opecode_de), .opr0_o(opr0_de), .opr1_o(opr1_de),
         .d_info_o(d_info_de),
-        .wb_o(wb_de), .wb_r_o(wb_r_de), .branch_i(branch_wire)
+        .wb_r_o(wb_r_de), .branch_i(branch_wire)
     );
 
     g_reg_x16 register(

@@ -64,33 +64,21 @@ module execute_instruction (clk, reset,
     wire [W_FLAGS -1: 0] flags_rotate;
     wire [W_FLAGS -1: 0] flags_logic;
     
-    wire [W_OPR -1: 0] result_null;
+    wire [W_OPR -1: 0] result_null = {W_OPR{1'b0}};
     wire [W_OPR -1: 0] selected_result;
 
-    wire [W_FLAGS -1: 0] flags_null;
+    wire [W_FLAGS -1: 0] flags_null = {W_FLAGS{1'b0}};
     wire [W_OPR -1: 0] selected_flags_pre;
     wire [W_FLAGS -1: 0] selected_flags;
 
-    wire [W_CC -1: 0] cc;
+    wire [W_CC -1: 0] cc = opr0_i[W_CC -1:0];;
 
-    wire [W_OPR -1: 0] imm_signed;
-    wire [W_OPR -1: 0] opr1_or_imm;
-    wire [W_OPR -1: 0] opr1_or_imm_low;
+    wire [W_OPR -1: 0] imm_signed = d_info_i[SIGN]?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
+    wire [W_OPR -1: 0] opr1_or_imm = d_info_i[IMMF] ? imm_signed : opr1_i;
+    wire [W_OPR -1: 0] opr1_or_imm_low = d_info_i[IMMF] ? imm_signed[15:0] : opr1_i[15:0];
 
-    wire [W_EXEC -1: 0] executor;
-    wire [W_SELECT -1: 0] select;
-
-    assign cc = opr0_i[W_CC -1:0];
-
-    assign imm_signed = d_info_i[SIGN]?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
-    assign opr1_or_imm = d_info_i[IMMF] ? imm_signed : opr1_i;
-    assign opr1_or_imm_low = d_info_i[IMMF] ? imm_signed[15:0] : opr1_i[15:0];
-
-    assign result_null = {W_OPR{1'b0}};
-    assign flags_null = {W_FLAGS{1'b0}};
-
-    assign executor = d_info_i[D_INFO -1:D_INFO - W_EXEC];
-    assign select = d_info_i[D_INFO - W_EXEC -1:D_INFO - W_EXEC - W_SELECT];
+    wire [W_EXEC -1: 0] executor = d_info_i[D_INFO -1:D_INFO - W_EXEC];
+    wire [W_SELECT -1: 0] select = d_info_i[D_INFO - W_EXEC -1:D_INFO - W_EXEC - W_SELECT];
 
     exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[LSTF] & select[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 

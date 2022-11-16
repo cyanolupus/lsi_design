@@ -51,6 +51,7 @@ module execute_instruction (clk, reset,
     reg ld_r;
 
     wire [W_OPR -1: 0] result_addx;
+    wire [W_OPR -1: 0] result_adcx;
     wire [W_OPR -1: 0] result_mulx;
     wire [W_OPR -1: 0] result_divx;
     wire [W_OPR -1: 0] result_absx;
@@ -59,6 +60,7 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_set;
 
     wire [W_FLAGS -1: 0] flags_addx;
+    wire [W_FLAGS -1: 0] flags_adcx;
     wire [W_FLAGS -1: 0] flags_mulx;
     wire [W_FLAGS -1: 0] flags_divx;
     wire [W_FLAGS -1: 0] flags_cmp;
@@ -90,6 +92,7 @@ module execute_instruction (clk, reset,
     exec_ldst ldst (opr0_i, opr1_i, immf_i, imm_i, stf_i & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
 
     exec_addx addx (opr0_i, opr1_or_imm, result_addx, opecode_i[0], flags_addx);
+    exec_adcx adcx (opr0_i, opr1_or_imm, result_adcx, opecode_i[0], flags_r, flags_adcx);
     exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
     exec_divx divx (opr0_i, opr1_or_imm, result_divx, flags_divx);
     exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);
@@ -108,7 +111,7 @@ module execute_instruction (clk, reset,
     // input [W_OPR - 1:0] result30, result31; // NOP, HLT
     assign selected_result = select5from32(opecode_i[4:0],
         result_addx, result_addx, result_mulx, result_divx, result_null, result_absx,
-        result_null, result_null, result_shift, result_shift, result_shift, result_null,
+        result_adcx, result_adcx, result_shift, result_shift, result_shift, result_null,
         result_null, result_null, result_null, result_null, result_logic, result_logic,
         result_logic, result_logic, result_null, result_null, result_set, result_set,
         result_null, result_null, result_null, result_null, result_null, result_null,
@@ -116,7 +119,7 @@ module execute_instruction (clk, reset,
 
     assign selected_flags_pre = select5from32(opecode_i[4:0],
         flags_addx, flags_addx, flags_mulx, flags_divx, flags_cmp, flags_absx,
-        flags_null, flags_null, flags_shift, flags_shift, flags_shift, flags_null,
+        flags_adcx, flags_adcx, flags_shift, flags_shift, flags_shift, flags_null,
         flags_null, flags_null, flags_null, flags_null, flags_logic, flags_logic,
         flags_logic, flags_logic, flags_null, flags_null, flags_null, flags_null,
         flags_null, flags_null, flags_null, flags_null, flags_null, flags_null,

@@ -2,7 +2,7 @@ module execute_instruction (clk, reset,
                 v_i, v_o,
                 stall_i, stall_o,
                 pc_i, imm_i,
-                opecode_i, opr0_i, opr1_i,
+                opr0_i, opr1_i,
                 d_info_i, wb_r_i,
                 ldst_addr_o, ldst_write_o, 
                 ldst_data_i, ldst_data_o,
@@ -10,7 +10,7 @@ module execute_instruction (clk, reset,
                 branch_o, branch_addr_o);
 
     `include "./include/params.v"
-    `include "./include/select5from32.v"
+    `include "./include/select4from16.v"
 
     input  clk, reset;
     input  v_i;
@@ -20,7 +20,6 @@ module execute_instruction (clk, reset,
     input [ADDR -1: 0] pc_i;
     input [W_IMM -1: 0] imm_i;
 
-    input [W_OPC -1: 0] opecode_i;
     input [W_OPR -1: 0] opr0_i, opr1_i;
     input [D_INFO -1: 0] d_info_i;
     input [W_RD -1: 0] wb_r_i;
@@ -78,6 +77,9 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] opr1_or_imm;
     wire [W_OPR -1: 0] opr1_or_imm_low;
 
+    wire [W_EXEC -1: 0] executor;
+    wire [W_SELECT -1: 0] select;
+
     assign cc = opr0_i[W_CC -1:0];
 
     assign imm_signed = d_info_i[SIGN]?{{16{imm_i[15]}},imm_i}:{{16{1'b0}},imm_i};
@@ -87,42 +89,40 @@ module execute_instruction (clk, reset,
     assign result_null = {W_OPR{1'b0}};
     assign flags_null = {W_FLAGS{1'b0}};
 
-    exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[STF] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+    assign executor = d_info_i[D_INFO -1:D_INFO - W_EXEC];
+    assign select = d_info_i[D_INFO - W_EXEC -1:D_INFO - W_EXEC - W_SELECT];
 
-    exec_addx addx (opr0_i, opr1_or_imm, result_addx, opecode_i[0], flags_addx);
-    exec_adcx adcx (opr0_i, opr1_or_imm, result_adcx, opecode_i[0], flags_r, flags_adcx);
+    exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[LSTF] & select[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+
+    exec_addx addx (opr0_i, opr1_or_imm, result_addx, select[0], flags_addx);
+    exec_adcx adcx (opr0_i, opr1_or_imm, result_adcx, select[0], flags_r, flags_adcx);
     exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
     exec_divx divx (opr0_i, opr1_or_imm, result_divx, flags_divx);
     exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);
     exec_absx absx (opr1_or_imm, result_absx, flags_absx);
-    exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[1:0], flags_shift);
-    exec_rotate rotate (opr0_i, opr1_or_imm, result_rotate, opecode_i[0], flags_rotate);
-    exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0], flags_logic);
-    exec_set set (opr0_i, imm_i, opecode_i[0]);
-    exec_branch branch (cc, opr1_or_imm_low, v_i, pc_i, opecode_i, flags_r, branch_o, branch_addr_o);
+    exec_shift shift (opr0_i, opr1_or_imm, result_shift, select, flags_shift);
+    exec_rotate rotate (opr0_i, opr1_or_imm, result_rotate, select[0], flags_rotate);
+    exec_logic logic (opr0_i, opr1_i, result_logic, select, flags_logic);
+    exec_set set (opr0_i, imm_i, select[0]);
+    exec_branch branch (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select[0], flags_r, branch_o, branch_addr_o);
 
-    // input [W_OPC - 3:0] select;
-    // input [W_OPR - 1:0] result0, result1, result2, result3, result4, result5; // ADDx, SUBx, MULx, DIVx, (CMPx), ABSx
-    // input [W_OPR - 1:0] result6, result7, result8, result9, result10, result11; // ADCx, SBCx, SHLx, SHRx, ASHx, none
-    // input [W_OPR - 1:0] result12, result13, result14, result15, result16, result17; // ROLx, RORx, none, none, AND, OR
-    // input [W_OPR - 1:0] result18, result19, result20, result21, result22, result23; // NOT, XOR, none, none, SETL, SETH
-    // input [W_OPR - 1:0] result24, result25, result26, result27, result28, result29; // LD, ST, none, none, J, JA
-    // input [W_OPR - 1:0] result30, result31; // NOP, HLT
-    assign selected_result = select5from32(opecode_i[4:0],
-        result_addx, result_addx, result_mulx, result_divx, result_null, result_absx,
-        result_adcx, result_adcx, result_shift, result_shift, result_shift, result_null,
-        result_rotate, result_rotate, result_null, result_null, result_logic, result_logic,
-        result_logic, result_logic, result_null, result_null, result_set, result_set,
-        result_null, result_null, result_null, result_null, result_null, result_null,
-        result_null, result_null);
+    // input [W_OPR -1: 0] data0, data1, data2, data3; // addx mulx divx cmp
+    // input [W_OPR -1: 0] data4, data5, data6, data7; // absx adcx shift rotate
+    // input [W_OPR -1: 0] data8, data9, dataa, datab; // logic set none none
+    // input [W_OPR -1: 0] datac, datad, datae, dataf; // none none none none
 
-    assign selected_flags_pre = select5from32(opecode_i[4:0],
-        flags_addx, flags_addx, flags_mulx, flags_divx, flags_cmp, flags_absx,
-        flags_adcx, flags_adcx, flags_shift, flags_shift, flags_shift, flags_null,
-        flags_rotate, flags_rotate, flags_null, flags_null, flags_logic, flags_logic,
-        flags_logic, flags_logic, flags_null, flags_null, flags_null, flags_null,
-        flags_null, flags_null, flags_null, flags_null, flags_null, flags_null,
-        flags_null, flags_null);
+    assign selected_result = select4from16(executor,
+        result_addx, result_mulx, result_divx, result_null,
+        result_absx, result_adcx, result_shift, result_rotate,
+        result_logic, result_set, result_null, result_null,
+        result_null, result_null, result_null, result_null);
+
+    assign selected_flags_pre = select4from16(executor,
+        flags_addx, flags_mulx, flags_divx, flags_cmp,
+        flags_absx, flags_adcx, flags_shift, flags_rotate,
+        flags_logic, flags_null, flags_null, flags_null,
+        flags_null, flags_null, flags_null, flags_null);
+    
     assign selected_flags = selected_flags_pre[W_FLAGS - 1:0];
 
     assign v_o = v_r;
@@ -146,9 +146,9 @@ module execute_instruction (clk, reset,
                 wb_r_r <= wb_r_i;
                 wb_r <= d_info_i[WRSV];
                 flags_r <= selected_flags;
-                ld_r <= (opecode_i == 7'b001_1000);
+                ld_r <= ~select[0] & d_info_i[LSTF];
 
-                if (opecode_i == 7'b001_1111 & v_i) begin
+                if (d_info_i[HLTF] & v_i) begin
                     $finish;
                 end
             end

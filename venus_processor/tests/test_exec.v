@@ -35,9 +35,7 @@ module test_exec();
     // decode - execute
     wire v_de;
     wire stall_ed;
-    wire [W_OPC -1: 0] opecode_de;
     wire [W_OPR -1: 0] opr0_de, opr1_de;
-    wire wb_de;
     wire [W_RD -1: 0] wb_r_de;
     wire [ADDR -1:0] pc_de;
     wire [W_IMM -1:0] imm_de;
@@ -60,7 +58,7 @@ module test_exec();
         .v_i(v_de), .v_o(v_er),
         .stall_i(stall_i), .stall_o(stall_ed),
         .pc_i(pc_de), .imm_i(imm_de),
-        .opecode_i(opecode_de), .opr0_i(opr0_de), .opr1_i(opr1_de),
+        .opr0_i(opr0_de), .opr1_i(opr1_de),
         .d_info_i(d_info_de), .wb_r_i(wb_r_de),
         .ldst_addr_o(ldst_addr_em), .ldst_write_o(ldst_write_em),
         .ldst_data_i(ldst_data_mem_me), .ldst_data_o(ldst_data_mem_em),
@@ -85,7 +83,7 @@ module test_exec();
         .r_opr0_i(r_opr0_rd), .r_opr1_i(r_opr1_rd),
         .imm_o(imm_de),
         .reserved_i(reserved_rd),
-        .opecode_o(opecode_de), .opr0_o(opr0_de), .opr1_o(opr1_de),
+        .opr0_o(opr0_de), .opr1_o(opr1_de),
         .d_info_o(d_info_de),
         .wb_r_o(wb_r_de), .branch_i(branch_wire)
     );
@@ -137,10 +135,10 @@ module test_exec();
     always @(posedge clk) begin
         // $display("-------------------------------------------------------------");
         // if (v_fd) $display("[  fetch] v=%b st=%b pc=%d inst=%h", v_fd, stall_o, pc_fd, inst_fd);
-        // if (v_de) $display("[ decode] v=%b st=%b pc=%d opc=%h rd=%h rs=%h imm=%h", v_de, stall_df, pc_de, opecode_de, r0_dr, r1_dr, imm_de);
-        // if (v_er) $display("[execute] v=%b st=%b br=%d wb=%b r%h=%d flags=%b%b%b%b", v_er, stall_ed, branch_addr_wire, wb_er, wb_r_er, result_er, exec.carry_flag_r, exec.zero_flag_r, exec.sign_flag_r, exec.overflow_flag_r);
+        // if (v_de) $display("[ decode] v=%b st=%b pc=%d opc=%h rd=%h rs=%h imm=%h d_info=%h", v_de, stall_df, pc_de, opecode_de, r0_dr, r1_dr, imm_de, d_info_de);
+        // if (v_er) $display("[execute] v=%b st=%b br=%d wb=%b r%h=%d flags=%b", v_er, stall_ed, branch_addr_wire, wb_er, wb_r_er, result_er, exec.flags_r);
 
-        if (opecode_de == 7'b001_1111 & v_de) begin
+        if (d_info_de[HLTF] & v_de) begin
             $display("|----------------------------------dump---------------------------------|");
             $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");

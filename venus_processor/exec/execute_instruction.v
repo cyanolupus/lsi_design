@@ -95,7 +95,7 @@ module execute_instruction (clk, reset,
     exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[1:0]);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0]);
     exec_set set (opr0_i, imm_i, opecode_i[0], result_set);
-    exec_branch branch (cc, opr1_or_imm_low, v_i, pc_i, opecode_i, carry_flag_r, zero_flag_r, sign_flag_r, overflow_flag_r, branch_o, branch_addr_o);
+    exec_branch branch (cc, opr1_or_imm_low, v_i, pc_i, opecode_i, flags_r, branch_o, branch_addr_o);
 
     // input [W_OPC - 3:0] select;
     // input [W_OPR - 1:0] result0, result1, result2, result3, result4, result5; // ADDx, SUBx, MULx, DIVx, (CMPx), ABSx

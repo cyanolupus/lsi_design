@@ -56,6 +56,7 @@ module execute_instruction (clk, reset,
     wire [W_OPR -1: 0] result_divx;
     wire [W_OPR -1: 0] result_absx;
     wire [W_OPR -1: 0] result_shift;
+    wire [W_OPR -1: 0] result_rotate;
     wire [W_OPR -1: 0] result_logic;
     wire [W_OPR -1: 0] result_set;
 
@@ -66,6 +67,7 @@ module execute_instruction (clk, reset,
     wire [W_FLAGS -1: 0] flags_cmp;
     wire [W_FLAGS -1: 0] flags_absx;
     wire [W_FLAGS -1: 0] flags_shift;
+    wire [W_FLAGS -1: 0] flags_rotate;
     wire [W_FLAGS -1: 0] flags_logic;
     
     wire [W_OPR -1: 0] result_null;
@@ -98,6 +100,7 @@ module execute_instruction (clk, reset,
     exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);
     exec_absx absx (opr1_or_imm, result_absx, flags_absx);
     exec_shift shift (opr0_i, opr1_or_imm, result_shift, opecode_i[1:0], flags_shift);
+    exec_rotate rotate (opr0_i, opr1_or_imm, result_rotate, opecode_i[0], flags_rotate);
     exec_logic logic (opr0_i, opr1_i, result_logic, opecode_i[1:0], flags_logic);
     exec_set set (opr0_i, imm_i, opecode_i[0]);
     exec_branch branch (cc, opr1_or_imm_low, v_i, pc_i, opecode_i, flags_r, branch_o, branch_addr_o);
@@ -112,7 +115,7 @@ module execute_instruction (clk, reset,
     assign selected_result = select5from32(opecode_i[4:0],
         result_addx, result_addx, result_mulx, result_divx, result_null, result_absx,
         result_adcx, result_adcx, result_shift, result_shift, result_shift, result_null,
-        result_null, result_null, result_null, result_null, result_logic, result_logic,
+        result_rotate, result_rotate, result_null, result_null, result_logic, result_logic,
         result_logic, result_logic, result_null, result_null, result_set, result_set,
         result_null, result_null, result_null, result_null, result_null, result_null,
         result_null, result_null);
@@ -120,7 +123,7 @@ module execute_instruction (clk, reset,
     assign selected_flags_pre = select5from32(opecode_i[4:0],
         flags_addx, flags_addx, flags_mulx, flags_divx, flags_cmp, flags_absx,
         flags_adcx, flags_adcx, flags_shift, flags_shift, flags_shift, flags_null,
-        flags_null, flags_null, flags_null, flags_null, flags_logic, flags_logic,
+        flags_rotate, flags_rotate, flags_null, flags_null, flags_logic, flags_logic,
         flags_logic, flags_logic, flags_null, flags_null, flags_null, flags_null,
         flags_null, flags_null, flags_null, flags_null, flags_null, flags_null,
         flags_null, flags_null);

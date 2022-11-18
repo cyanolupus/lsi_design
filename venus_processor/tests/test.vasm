@@ -1,26 +1,36 @@
     setl r5 $0
     setl r1 $10
     setl r2 $1
-L1:
+
+test_factorial:
     store r1 r2 $0
     mul r2 r1
     sub r1 $1
-    jz :L2
-    jmp :L1
+    jz :test_div
+    jmp :test_factorial
 
-L2:
+test_div:
     div r2 $7
     cmp r2 $7
-    jb :L3
-    jmp :L2
+    jb :test_rot
+    jmp :test_div
     hlt
 
-L3:
-    add r1 $3
-    add r1 $3
+test_rot:
+    seth r7 $0xf000
+    rol r7 $1
+    rol r7 $1
+    rol r7 $1
+    rol r7 $1
+    jmp :test_carry
+
+test_carry:
     setl r10 $0xffff
     seth r10 $0xffff
     add r10 $1
     adc r11 $1
+    jmp :end
+    
+end:
     nop
     hlt

@@ -13,6 +13,10 @@ module top(clk, reset, mem_write, mem_in, stall_i);
     wire branch_wire;
     wire [ADDR -1: 0] branch_addr_wire;
 
+    // pc - fetch
+    wire [ADDR -1: 0] pc_pf;
+    wire stall_fp;
+
     // fetch - memory
     wire [WORD -1: 0] inst_mf;
     wire [ADDR -1: 0] addr_fm;
@@ -98,15 +102,22 @@ module top(clk, reset, mem_write, mem_in, stall_i);
     fetch_instruction fetch(
         .clk(clk), .reset(reset),
         .v_o(v_fd),
-        .stall_i(stall_df), .stall_o(stall_o),
+        .stall_i(stall_df), .stall_o(stall_fp),
         .inst_i(inst_mf), .inst_o(inst_fd),
-        .mem_o(addr_fm), .pc_o(pc_fd),
-        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire)
+        .pc_i(pc_pf), .pc_o(pc_fd),
+        .branch_i(branch_wire)
     );
 
     mem_instruction mem_read(
         .clk(clk),
-        .A(addr_fm), .W(mem_write),
+        .A(pc_pf), .W(mem_write),
         .D(mem_in), .Q(inst_mf)
+    );
+
+    pc pc(
+        .clk(clk), .reset(reset),
+        .stall_i(stall_fp), .stall_o(stall_o),
+        .pc_o(pc_pf),
+        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire)
     );
 endmodule

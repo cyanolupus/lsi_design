@@ -22,7 +22,7 @@ module top_test();
     end
 
     initial begin
-        $display("  pc:OPC       opr0       opr1   imm       result");
+        $display("|   pc|OPC|      opr0|      opr1|  imm|    result|reg|");
         clk = 1'b0;
         reset = 1'b0;
         mem_write = 1'b0;
@@ -39,14 +39,20 @@ module top_test();
 
     always @(posedge clk) begin
         if (top.v_de) begin
-            $write("%h:", top.pc_de);
+            $display("|-----|---|----------|----------|-----|----------|---|");
+            $write("|%d|", top.pc_de);
             encode_inst(top.d_info_de);
-            $write(" %d %d %d", top.opr0_de, top.opr1_de, top.imm_de);
+            $write("|%d|%d|%d|", top.opr0_de, top.opr1_de, top.imm_de);
             if (top.d_info_de[WRSV]) begin
-                $write(" = %d", top.exec.selected_result);
+                $write("%d| r%h|", top.exec.selected_result, top.wb_r_de);
+            end else if (top.d_info_de[BRF] & top.branch_wire) begin
+                $write("         o|   |");
+            end else if (top.d_info_de[BRF]) begin
+                $write("         x|   |");
             end else begin
-                $write("             ");
+                $write("          |   |");
             end
+
             $display("");
         end
 

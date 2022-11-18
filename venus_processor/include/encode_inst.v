@@ -16,7 +16,15 @@ task encode_inst;
     if (d_info[HLTF]) begin
         $write("HLT");
     end else if (d_info[BRF]) begin
-        $write("JMP");
+        case (d_info[D_INFO - W_EXEC -1: D_INFO - W_EXEC - W_SELECT])
+            3'b000: $write("JMP");
+            3'b001: $write("JZ ");
+            3'b010: $write("JNZ");
+            3'b011: $write("JA ");
+            3'b100: $write("JB ");
+            3'b110: $write("J  ");
+            3'b111: $write("JR ");
+        endcase
     end else if (d_info[LSTF]) begin
         if (d_info[D_INFO - W_EXEC - W_SELECT]) begin
             $write("ST ");

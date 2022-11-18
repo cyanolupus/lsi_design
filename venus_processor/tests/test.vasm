@@ -10,6 +10,8 @@ test_factorial:
     jmp :test_factorial
 
 test_div:
+    add r1 $1
+    store r1 r2 $10
     div r2 $7
     cmp r2 $7
     jb :test_rot

@@ -14,7 +14,7 @@ module exec_addx (opr0_i, opr1_i, result_o, select_i, flags_i, flags_o);
     wire sign;
     wire overflow;
 
-    assign carry_borrow = (select_i[0] ^ flags_i[0]) & select_i[1];
+    assign carry_borrow = select_i[0] ^ (flags_i[0] & select_i[1]);
     assign opr1_pre = select_i[0] ? ~opr1_i: opr1_i;
     assign result_pre = opr0_i + opr1_pre + carry_borrow;
     assign result_o = result_pre[W_OPR -1:0];

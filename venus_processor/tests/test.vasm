@@ -1,11 +1,10 @@
     setl r5 $0
-    setl r1 $1
+    setl r1 $10
     setl r2 $1
 L1:
     store r1 r2 $0
-    add r1 $1
     mul r2 r1
-    cmp r1 $13
+    sub r1 $1
     jz :L2
     jmp :L1
 

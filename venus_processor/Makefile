@@ -6,6 +6,10 @@ exec := $(shell ls -d exec/*.v | tr '\n' ' ')
 mem/memfiles/mem_instruction.dat: tests/test.vasm
 	python ../vasm/vasm.py $^ > $@
 
+venus_processor_test: top_test.v top.v mem/mem_data.v mem/mem_instruction.v $(fetch) $(register) $(decode) $(exec)
+	make mem/memfiles/mem_instruction.dat
+	vcs -R $^
+
 venus_processor: top.v mem/mem_data.v mem/mem_instruction.v $(fetch) $(register) $(decode) $(exec)
 	make mem/memfiles/mem_instruction.dat
 	vcs -R $^

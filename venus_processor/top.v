@@ -1,16 +1,13 @@
-`timescale 1ns/100ps
-
-module top();
-    parameter STEP = 10;
+module top(clk, reset, mem_write, mem_in, stall_i);
     `include "./include/params.v"
 
-    integer i;
+    input clk;
+    input reset;
+    input mem_write;
+    input [31:0] mem_in;
+    input stall_i;
 
     // general
-    reg clk, reset;
-    reg stall_i;
-    reg mem_write;
-    reg [WORD -1:0] mem_in;
     wire stall_o;
     wire v_o;
     wire branch_wire;
@@ -112,47 +109,4 @@ module top();
         .A(addr_fm), .W(mem_write),
         .D(mem_in), .Q(inst_mf)
     );
-
-    always begin
-        #(STEP/2) clk = ~clk;
-    end
-
-    initial begin
-        clk = 1'b0;
-        reset = 1'b0;
-        mem_write = 1'b0;
-        mem_in = 32'h00000000;
-        stall_i = 1'b0;
-
-        #(STEP) reset = 1'b1;
-        
-        while (1) begin
-            #STEP;
-        end
-        $finish;
-    end
-
-    always @(posedge clk) begin
-        if (d_info_de[HLTF] & v_de) begin
-            $display("|----------------------------------dump---------------------------------|");
-            $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");
-            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", register.data1, register.data2, register.data3, register.data4, register.data5, register.data6, register.data7, register.data8);
-            $display("|-----------------------------------------------------------------------|");
-            $display("|      r8|      r9|      ra|      rb|      rc|      rd|      re|      rf|");
-            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", register.data9, register.data10, register.data11, register.data12, register.data13, register.data14, register.data15, register.data16);
-            $display("|-----------------------------------------------------------------------|");
-            $display("|  mem[0]|  mem[1]|  mem[2]|  mem[3]|  mem[4]|  mem[5]|  mem[6]|  mem[7]|");
-            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[0], mem_rw.mem_bank[1], mem_rw.mem_bank[2], mem_rw.mem_bank[3], mem_rw.mem_bank[4], mem_rw.mem_bank[5], mem_rw.mem_bank[6], mem_rw.mem_bank[7]);
-            $display("|-----------------------------------------------------------------------|");
-            $display("|  mem[8]|  mem[9]|  mem[a]|  mem[b]|  mem[c]|  mem[d]|  mem[e]|  mem[f]|");
-            $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
-            $display("|-----------------------------------------------------------------------|");
-        end
-
-        $writememh("./result.dat", mem_rw.mem_bank, 0, 255);
-    end
 endmodule

@@ -4,3 +4,4 @@ simv
 *.key
 __pycache__/
 mem_instruction.dat
+result.dat

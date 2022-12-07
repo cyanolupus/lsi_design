@@ -32,9 +32,9 @@ module top_test();
 
         #(STEP) reset = 1'b1;
         
-        // while (1) begin
-        //     #STEP;
-        // end
+        while (1) begin
+            #STEP;
+        end
 
         for (i = 0; i < 100; i = i + 1) begin
             #STEP;

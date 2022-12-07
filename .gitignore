@@ -5,3 +5,9 @@ simv
 __pycache__/
 mem_instruction.dat
 result.dat
+*.log
+*.syn
+*.mr
+*.svf
+*.vg
+*.pvl

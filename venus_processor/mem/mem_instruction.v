@@ -26,6 +26,6 @@ module mem_instruction(clk,
     end
 
     initial begin
-        $readmemh("./mem/memfiles/mem_instruction.dat", mem_bank);
+        $readmemh("../mem/memfiles/mem_instruction.dat", mem_bank);
     end
 endmodule

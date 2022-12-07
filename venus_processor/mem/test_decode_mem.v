@@ -26,6 +26,6 @@ module test_decode_mem(clk,
     end
 
     initial begin
-        $readmemh("./mem/memfiles/test_decode_mem.dat", mem_bank);
+        $readmemh("../mem/memfiles/test_decode_mem.dat", mem_bank);
     end
 endmodule

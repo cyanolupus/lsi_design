@@ -1,8 +1,8 @@
 `timescale 1ns/100ps
 
 module top_test();
-    `include "./include/params.v"
-    `include "./include/encode_inst.v"
+    `include "../include/params.v"
+    `include "../include/encode_inst.v"
     parameter STEP = 10;
     integer i;
 

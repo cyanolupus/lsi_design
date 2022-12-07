@@ -4,7 +4,7 @@ module DP_mem32x64k(clk,
                     D,
                     Q);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk;
     input [ADDR -1: 0] A;

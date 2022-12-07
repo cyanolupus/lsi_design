@@ -3,8 +3,8 @@ module exec_branch (cc, opr1_i,
                 select_i, flags_i,
                 branch_o, branch_addr_o);
 
-    `include "./include/params.v"
-    `include "./include/select3from8.v"
+    `include "../include/params.v"
+    `include "../include/select3from8.v"
 
     input [W_CC -1: 0] cc;
     input [ADDR -1: 0] opr1_i;

@@ -9,8 +9,8 @@ module execute_instruction (clk, reset,
                 result_o, wb_r_o, wb_o,
                 branch_o, branch_addr_o);
 
-    `include "./include/params.v"
-    `include "./include/select4from16.v"
+    `include "../include/params.v"
+    `include "../include/select4from16.v"
 
     input  clk, reset;
     input  v_i;

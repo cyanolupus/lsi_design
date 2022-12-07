@@ -1,5 +1,5 @@
 module top(clk, reset, mem_write, mem_in, stall_i);
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk;
     input reset;

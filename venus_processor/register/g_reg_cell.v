@@ -6,7 +6,7 @@ module g_reg_cell(clk, reset,
                         wb_i
                         );
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk, reset;
     input [W_OPR -1: 0] data_i;

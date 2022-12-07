@@ -4,7 +4,7 @@ module test_decode_mem(clk,
                     D,
                     Q);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk;
     input [ADDR -1: 0] A;

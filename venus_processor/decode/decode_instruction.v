@@ -12,8 +12,8 @@ module decode_instruction(clk, reset,
                 d_info_o,
                 wb_r_o, branch_i);
 
-    `include "./include/params.v"
-    `include "./include/decode_inst.v"
+    `include "../include/params.v"
+    `include "../include/decode_inst.v"
 
     input  clk, reset;
     input  v_i;

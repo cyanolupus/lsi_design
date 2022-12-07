@@ -3,7 +3,7 @@ module pc(clk, reset,
             pc_o,
             branch_i, branch_addr_i);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input  clk, reset;
     input stall_i;

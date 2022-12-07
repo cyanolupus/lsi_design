@@ -1,5 +1,5 @@
 module exec_rotate (opr0_i, opr1_i, result_o, right_i, flags_o);
-    `include "./include/params.v"
+    `include "../include/params.v"
     input signed [W_OPR -1: 0] opr0_i, opr1_i;
     output [W_OPR -1: 0] result_o;
     input right_i;

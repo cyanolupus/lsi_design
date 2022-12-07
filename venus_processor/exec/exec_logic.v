@@ -1,6 +1,6 @@
 module exec_logic (opr0_i, opr1_i, result_o, select_i, flags_o);
-    `include "./include/params.v"
-    `include "./include/select2from4.v"
+    `include "../include/params.v"
+    `include "../include/select2from4.v"
     
     input [W_OPR -1: 0] opr0_i, opr1_i;
     output [W_OPR -1: 0] result_o;

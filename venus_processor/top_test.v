@@ -11,20 +11,33 @@ module top_test();
     reg inst_write;
     reg [WORD -1:0] inst_in;
 
-    // top - memory
+    // top - mem_inst
     wire [WORD -1:0] inst_mt;
     wire [ADDR -1:0] inst_addr_tm;
+
+    // top - mem_rw
+    wire [ADDR -1:0] ldst_addr_tm;
+    wire [W_OPR -1:0] ldst_data_tm, ldst_data_mt;
+    wire ldst_write_tm;
 
     top top(
         .clk(clk), .reset(reset),
         .stall_i(stall_i),
-        .inst_i(inst_mt), .inst_addr_o(inst_addr_tm)
+        .inst_i(inst_mt), .inst_addr_o(inst_addr_tm),
+        .ldst_data_i(ldst_data_mt), .ldst_data_o(ldst_data_tm),
+        .ldst_addr_o(ldst_addr_tm), .ldst_write_o(ldst_write_tm)
     );
 
     mem_instruction mem_read(
         .clk(clk),
         .A(inst_addr_tm), .W(inst_write),
         .D(inst_in), .Q(inst_mt)
+    );
+
+    mem_data mem_rw (
+        .clk(clk),
+        .A(ldst_addr_tm), .W(ldst_write_tm),
+        .D(ldst_data_tm), .Q(ldst_data_mt)
     );
 
     always begin
@@ -92,14 +105,14 @@ module top_test();
             $display("|-----------------------------------------------------------------------|");
             $display("|  mem[0]|  mem[1]|  mem[2]|  mem[3]|  mem[4]|  mem[5]|  mem[6]|  mem[7]|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", top.mem_rw.mem_bank[0], top.mem_rw.mem_bank[1], top.mem_rw.mem_bank[2], top.mem_rw.mem_bank[3], top.mem_rw.mem_bank[4], top.mem_rw.mem_bank[5], top.mem_rw.mem_bank[6], top.mem_rw.mem_bank[7]);
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[0], mem_rw.mem_bank[1], mem_rw.mem_bank[2], mem_rw.mem_bank[3], mem_rw.mem_bank[4], mem_rw.mem_bank[5], mem_rw.mem_bank[6], mem_rw.mem_bank[7]);
             $display("|-----------------------------------------------------------------------|");
             $display("|  mem[8]|  mem[9]|  mem[a]|  mem[b]|  mem[c]|  mem[d]|  mem[e]|  mem[f]|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", top.mem_rw.mem_bank[8], top.mem_rw.mem_bank[9], top.mem_rw.mem_bank[10], top.mem_rw.mem_bank[11], top.mem_rw.mem_bank[12], top.mem_rw.mem_bank[13], top.mem_rw.mem_bank[14], top.mem_rw.mem_bank[15]);
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
             $display("|-----------------------------------------------------------------------|");
         end
 
-        $writememh("./result.dat", top.mem_rw.mem_bank, 0, 255);
+        $writememh("./result.dat", mem_rw.mem_bank, 0, 255);
     end
 endmodule

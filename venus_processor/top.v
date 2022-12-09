@@ -1,4 +1,7 @@
-module top(clk, reset, inst_addr_o, inst_i, stall_i);
+module top(clk, reset, stall_i,
+            inst_i, inst_addr_o,
+            ldst_data_i, ldst_data_o,
+            ldst_addr_o, ldst_write_o);
     `include "../include/params.v"
 
     input clk;
@@ -6,6 +9,11 @@ module top(clk, reset, inst_addr_o, inst_i, stall_i);
     input stall_i;
     input [WORD -1:0] inst_i;
     output [ADDR -1:0] inst_addr_o;
+
+    input [W_OPR -1:0] ldst_data_i;
+    output [W_OPR -1:0] ldst_data_o;
+    output [ADDR -1:0] ldst_addr_o;
+    output ldst_write_o;
 
     // general
     wire stall_o;
@@ -38,11 +46,6 @@ module top(clk, reset, inst_addr_o, inst_i, stall_i);
     wire [W_IMM -1:0] imm_de;
     wire [D_INFO -1:0] d_info_de;
 
-    // execute - memory
-    wire [ADDR -1:0] ldst_addr_em;
-    wire [W_OPR -1:0] ldst_data_mem_em, ldst_data_mem_me;
-    wire ldst_write_em;
-
     // execute - register
     wire v_er;
     wire stall_re;
@@ -59,16 +62,10 @@ module top(clk, reset, inst_addr_o, inst_i, stall_i);
         .pc_i(pc_de), .imm_i(imm_de),
         .opr0_i(opr0_de), .opr1_i(opr1_de),
         .d_info_i(d_info_de), .wb_r_i(wb_r_de),
-        .ldst_addr_o(ldst_addr_em), .ldst_write_o(ldst_write_em),
-        .ldst_data_i(ldst_data_mem_me), .ldst_data_o(ldst_data_mem_em),
+        .ldst_addr_o(ldst_addr_o), .ldst_write_o(ldst_write_o),
+        .ldst_data_i(ldst_data_i), .ldst_data_o(ldst_data_o),
         .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
         .branch_o(branch_wire), .branch_addr_o(branch_addr_wire)
-    );
-
-    mem_data mem_rw (
-        .clk(clk),
-        .A(ldst_addr_em), .W(ldst_write_em),
-        .D(ldst_data_mem_em), .Q(ldst_data_mem_me)
     );
 
     decode_instruction decode(

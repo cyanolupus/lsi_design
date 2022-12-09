@@ -1,4 +1,4 @@
-module top(clk, reset, mem_write, mem_in, stall_i);
+module top(clk, reset, inst_addr_o, inst_i, stall_i);
     `include "../include/params.v"
 
     input clk;
@@ -6,6 +6,8 @@ module top(clk, reset, mem_write, mem_in, stall_i);
     input mem_write;
     input [31:0] mem_in;
     input stall_i;
+    input [WORD -1:0] inst_i;
+    output [ADDR -1:0] inst_addr_o;
 
     // general
     wire stall_o;
@@ -16,10 +18,6 @@ module top(clk, reset, mem_write, mem_in, stall_i);
     // pc - fetch
     wire [ADDR -1: 0] pc_pf;
     wire stall_fp;
-
-    // fetch - memory
-    wire [WORD -1: 0] inst_mf;
-    wire [ADDR -1: 0] addr_fm;
 
     // fetch - decode
     wire v_fd;
@@ -53,6 +51,8 @@ module top(clk, reset, mem_write, mem_in, stall_i);
     wire wb_er;
     wire [W_RD -1: 0] wb_r_er;
     wire [W_OPR -1: 0] result_er;
+
+    assign inst_addr_o = pc_pf;
 
     execute_instruction exec(
         .clk(clk), .reset(reset),
@@ -103,15 +103,9 @@ module top(clk, reset, mem_write, mem_in, stall_i);
         .clk(clk), .reset(reset),
         .v_o(v_fd),
         .stall_i(stall_df), .stall_o(stall_fp),
-        .inst_i(inst_mf), .inst_o(inst_fd),
+        .inst_i(inst_i), .inst_o(inst_fd),
         .pc_i(pc_pf), .pc_o(pc_fd),
         .branch_i(branch_wire)
-    );
-
-    mem_instruction mem_read(
-        .clk(clk),
-        .A(pc_pf), .W(mem_write),
-        .D(mem_in), .Q(inst_mf)
     );
 
     pc pc(

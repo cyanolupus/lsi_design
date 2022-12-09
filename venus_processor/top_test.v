@@ -8,13 +8,23 @@ module top_test();
 
     reg clk, reset;
     reg stall_i;
-    reg mem_write;
-    reg [WORD -1:0] mem_in;
+    reg inst_write;
+    reg [WORD -1:0] inst_in;
+
+    // top - memory
+    wire [WORD -1:0] inst_mt;
+    wire [ADDR -1:0] inst_addr_tm;
 
     top top(
         .clk(clk), .reset(reset),
         .stall_i(stall_i),
-        .mem_write(mem_write), .mem_in(mem_in)
+        .inst_i(inst_mt), .inst_addr_o(inst_addr_tm),
+    );
+
+    mem_instruction mem_read(
+        .clk(clk),
+        .A(inst_addr_tm), .W(inst_write),
+        .D(inst_in), .Q(inst_mt)
     );
 
     always begin

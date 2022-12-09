@@ -3,8 +3,6 @@ module top(clk, reset, inst_addr_o, inst_i, stall_i);
 
     input clk;
     input reset;
-    input mem_write;
-    input [31:0] mem_in;
     input stall_i;
     input [WORD -1:0] inst_i;
     output [ADDR -1:0] inst_addr_o;

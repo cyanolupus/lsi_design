@@ -18,7 +18,7 @@ module top_test();
     top top(
         .clk(clk), .reset(reset),
         .stall_i(stall_i),
-        .inst_i(inst_mt), .inst_addr_o(inst_addr_tm),
+        .inst_i(inst_mt), .inst_addr_o(inst_addr_tm)
     );
 
     mem_instruction mem_read(
@@ -36,8 +36,8 @@ module top_test();
         $display("|pc_p,st|pc_f,st| pc_d|OPC|      opr0|      opr1|  imm|    result|reg|");
         clk = 1'b0;
         reset = 1'b0;
-        mem_write = 1'b0;
-        mem_in = 32'h00000000;
+        inst_write = 1'b0;
+        inst_in = 32'h00000000;
         stall_i = 1'b0;
 
         #(STEP) reset = 1'b1;

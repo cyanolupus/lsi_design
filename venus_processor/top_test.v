@@ -114,7 +114,7 @@ module top_test();
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
             $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
             $display("|-----------------------------------------------------------------------|");
-            $finish
+            $finish;
         end
 
         $writememh("./result.dat", mem_rw.mem_bank, 0, 255);

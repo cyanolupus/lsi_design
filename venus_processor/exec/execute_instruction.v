@@ -36,6 +36,8 @@ module execute_instruction (clk, reset,
     output branch_o;
     output [ADDR -1: 0] branch_addr_o;
 
+    output hlt_o;
+
     reg v_r;
     reg [W_OPR -1: 0] result_r;
     reg [W_RD -1: 0] wb_r_r;

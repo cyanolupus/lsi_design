@@ -15,6 +15,7 @@ module top(clk, reset, stall_i,
     output [W_OPR -1:0] ldst_data_o;
     output [ADDR -1:0] ldst_addr_o;
     output ldst_write_o;
+    output hlt_o;
 
     // general
     wire stall_o;

@@ -1,7 +1,8 @@
 module top(clk, reset, stall_i,
             inst_i, inst_addr_o,
             ldst_data_i, ldst_data_o,
-            ldst_addr_o, ldst_write_o);
+            ldst_addr_o, ldst_write_o,
+            hlt_o);
     `include "../include/params.v"
 
     input clk;
@@ -65,7 +66,8 @@ module top(clk, reset, stall_i,
         .ldst_addr_o(ldst_addr_o), .ldst_write_o(ldst_write_o),
         .ldst_data_i(ldst_data_i), .ldst_data_o(ldst_data_o),
         .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
-        .branch_o(branch_wire), .branch_addr_o(branch_addr_wire)
+        .branch_o(branch_wire), .branch_addr_o(branch_addr_wire),
+        .hlt_o(hlt_o)
     );
 
     decode_instruction decode(

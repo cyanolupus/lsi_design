@@ -7,7 +7,8 @@ module execute_instruction (clk, reset,
                 ldst_addr_o, ldst_write_o, 
                 ldst_data_i, ldst_data_o,
                 result_o, wb_r_o, wb_o,
-                branch_o, branch_addr_o);
+                branch_o, branch_addr_o,
+                hlt_o);
 
     `include "../include/params.v"
     `include "../include/select4from16.v"
@@ -115,6 +116,7 @@ module execute_instruction (clk, reset,
     assign result_o = (ld_r)?ldst_data_i:result_r;
     assign wb_r_o = wb_r_r;
     assign wb_o = v_r & wb_r;
+    assign hlt_o = d_info_i[HLTF] & v_i;
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
@@ -132,10 +134,6 @@ module execute_instruction (clk, reset,
                 wb_r <= d_info_i[WRSV];
                 flags_r <= selected_flags;
                 ld_r <= ~select[0] & d_info_i[LSTF];
-
-                if (d_info_i[HLTF] & v_i) begin
-                    $finish;
-                end
             end
         end
     end

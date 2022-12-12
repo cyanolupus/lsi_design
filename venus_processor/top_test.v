@@ -11,6 +11,8 @@ module top_test();
     reg inst_write;
     reg [WORD -1:0] inst_in;
 
+    wire hlt_o;
+
     // top - mem_inst
     wire [WORD -1:0] inst_mt;
     wire [ADDR -1:0] inst_addr_tm;
@@ -25,7 +27,8 @@ module top_test();
         .stall_i(stall_i),
         .inst_i(inst_mt), .inst_addr_o(inst_addr_tm),
         .ldst_data_i(ldst_data_mt), .ldst_data_o(ldst_data_tm),
-        .ldst_addr_o(ldst_addr_tm), .ldst_write_o(ldst_write_tm)
+        .ldst_addr_o(ldst_addr_tm), .ldst_write_o(ldst_write_tm),
+        .hlt_o(hlt_o)
     );
 
     mem_instruction mem_read(
@@ -93,7 +96,7 @@ module top_test();
             $display("");
         end
 
-        if (top.d_info_de[HLTF] & top.v_de) begin
+        if (hlt_o) begin
             $display("|----------------------------------dump---------------------------------|");
             $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
@@ -111,6 +114,7 @@ module top_test();
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
             $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
             $display("|-----------------------------------------------------------------------|");
+            $finish
         end
 
         $writememh("./result.dat", mem_rw.mem_bank, 0, 255);

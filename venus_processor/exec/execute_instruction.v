@@ -125,7 +125,7 @@ module execute_instruction (clk, reset,
             ld_r <= 0;
             flags_r <= 0;
         end else begin
-            if (~stall_i) begin
+            if (~stall_i | ~v_r) begin
                 v_r <= v_i;
                 result_r <= selected_result;
                 wb_r_r <= wb_r_i;

@@ -1,0 +1,4 @@
+        $display("[     pc]     st=%b pc=%d", top.stall_o, top.pc_pf);
+        $display("[  fetch] v=%b st=%b pc=%d inst=%h", top.v_fd, top.stall_fp, top.pc_fd, top.inst_fd);
+        $display("[ decode] v=%b st=%b pc=%d rd=%h rs=%h imm=%h d_info=%h", top.v_de, top.stall_df, top.pc_de, top.r0_dr, top.r1_dr, top.imm_de, top.d_info_de);
+        $display("[execute] v=%b st=%b br=%b,%d wb=%b r%h=%d flags=%b %b", top.v_er, top.stall_ed, top.branch_wire, top.branch_addr_wire, top.wb_er, top.wb_r_er, top.result_er, top.exec.flags_r, top.exec.branch.select_i);

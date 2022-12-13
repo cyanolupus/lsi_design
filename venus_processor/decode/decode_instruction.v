@@ -67,7 +67,7 @@ module decode_instruction(clk, reset,
             pc_r <= 0;
             d_info_r <= 0;
         end else begin
-            if (~stall_i) begin
+            if ((~stall_i | ~v_r) & ~reserved_i) begin
                 v_r <= v_i & ~branch_i;
                 r0_r <= inst_i[W_RD + W_RD + W_IMM - 1: W_RD + W_IMM];
                 r1_r <= inst_i[W_RD + W_IMM - 1: + W_IMM];

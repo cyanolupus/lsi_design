@@ -22,7 +22,8 @@ module top_test();
     end
 
     initial begin
-        $display("|   pc|OPC|      opr0|      opr1|  imm|    result|reg|");
+        $display("|--------------------------------------------------------------------|");
+        $display("|pc_p,st|pc_f,st| pc_d|OPC|      opr0|      opr1|  imm|    result|reg|");
         clk = 1'b0;
         reset = 1'b0;
         mem_write = 1'b0;
@@ -34,12 +35,18 @@ module top_test();
         while (1) begin
             #STEP;
         end
+
+        for (i = 0; i < 100; i = i + 1) begin
+            #STEP;
+        end
         $finish;
     end
 
     always @(posedge clk) begin
         if (top.v_de) begin
-            $display("|-----|---|----------|----------|-----|----------|---|");
+            $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
+            $write("|%d,%b", top.pc_pf, top.stall_fp);
+            $write("|%d,%b", top.pc_fd, top.stall_df);
             $write("|%d|", top.pc_de);
             encode_inst(top.d_info_de);
             $write("|%d|%d|%d|", top.opr0_de, top.opr1_de, top.imm_de);
@@ -53,6 +60,13 @@ module top_test();
                 $write("          |   |");
             end
 
+            $display("");
+        end else begin
+            $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
+            $write("|%d,%b", top.pc_pf, top.stall_fp);
+            $write("|%d,%b", top.pc_fd, top.stall_df);
+            $write("|%d|   ", top.pc_de);
+            $write("|          |          |     |          |   |");
             $display("");
         end
 

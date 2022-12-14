@@ -3,12 +3,27 @@ decode := $(shell ls -d ../decode/*.v | tr '\n' ' ')
 register := $(shell ls -d ../register/*.v | tr '\n' ' ')
 exec := $(shell ls -d ../exec/*.v | tr '\n' ' ')
 
+PYTHON_PATH := $(shell which python)
+VERILOG_PATH := $(shell which iverilog)
+VERILOG_OPT := -o ./venus_processor_test.out
+VERILOG_RUN := ./venus_processor_test.out
+
+ifeq ($(PYTHON_PATH),)
+	PYTHON_PATH := $(shell which python3)
+endif
+
+ifeq ($(VERILOG_PATH),)
+	VERILOG_PATH := $(shell which vcs)
+	VERILOG_OPT := "-R"
+endif
+
 ../mem/memfiles/mem_instruction.dat: ../tests/test.vasm
-	python ../../vasm/vasm.py $^ > $@
+	$(PYTHON_PATH) ../../vasm/vasm.py $^ > $@
 
 venus_processor_test: ../top_test.v ../top.v ../mem/mem_data.v ../mem/mem_instruction.v $(fetch) $(register) $(decode) $(exec)
 	make ../mem/memfiles/mem_instruction.dat
-	vcs -R $^
+	$(VERILOG_PATH) $(VERILOG_OPT) $^
+	$(VERILOG_RUN)
 
 venus_processor: ../top.v ../mem/mem_data.v ../mem/mem_instruction.v $(fetch) $(register) $(decode) $(exec)
 	make ../mem/memfiles/mem_instruction.dat

@@ -11,7 +11,7 @@ module top(clk, reset, stall_i,
     input [WORD -1:0] inst_i;
     output [ADDR -1:0] inst_addr_o;
 
-    assign inst_addr_o = pc_pf;
+    assign inst_addr_o = (pred_bpf & v_btf)?pred_addr_btf:pc_pf;
 
     input [W_OPR -1:0] ldst_data_i;
     output [W_OPR -1:0] ldst_data_o;
@@ -23,7 +23,11 @@ module top(clk, reset, stall_i,
     wire stall_o;
     wire v_o;
     wire branch_wire;
+    wire [ADDR -1: 0] branch_addr_pre;
     wire [ADDR -1: 0] branch_addr_wire;
+
+    assign branch_wire = (branch_id_ebp[1] ^ branch_ebp) & v_ebp;
+    assign branch_addr_wire = (branch_ebp)?branch_addr_pre:pc_de+1;
 
     // pc - fetch
     wire [ADDR -1: 0] pc_pf;
@@ -69,6 +73,7 @@ module top(clk, reset, stall_i,
     wire [W_OPR -1: 0] result_er;
 
     // execute - branch prediction
+    wire v_ebp;
     wire branch_ebp;
     wire [W_BRID -1: 0] branch_id_ebp;
 
@@ -82,8 +87,8 @@ module top(clk, reset, stall_i,
         .ldst_addr_o(ldst_addr_o), .ldst_write_o(ldst_write_o),
         .ldst_data_i(ldst_data_i), .ldst_data_o(ldst_data_o),
         .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
-        .branch_o(branch_wire), .branch_addr_o(branch_addr_wire),
-        .hlt_o(hlt_o)
+        .branch_o(branch_ebp), .branch_addr_o(branch_addr_pre),
+        .hlt_o(hlt_o), .brf_o(v_ebp)
     );
 
     decode_instruction decode(
@@ -116,8 +121,8 @@ module top(clk, reset, stall_i,
 
     branch_prediction branch_prediction(
         .clk(clk), .reset(reset),
-        .v_i(v_de),
-        .branch_i(branch_wire), .branch_id_i(branch_id_ebp),
+        .v_i(v_ebp),
+        .branch_i(branch_ebp), .branch_id_i(branch_id_ebp),
         .pred_o(pred_bpf), .pred_id_o(pred_id_bpf)
     );
 
@@ -134,13 +139,15 @@ module top(clk, reset, stall_i,
         .inst_i(inst_i), .inst_o(inst_fd),
         .pc_i(pc_pf), .pc_o(pc_fd),
         .brid_i(pred_id_bpf), .brid_o(brid_fd),
-        .branch_i(branch_wire)
+        .branch_i(branch_wire),
+        .pred_i(pred_bpf & v_btf), .pred_addr_i(pred_addr_btf)
     );
 
     pc pc(
         .clk(clk), .reset(reset),
         .stall_i(stall_fp), .stall_o(stall_o),
         .pc_o(pc_pf),
-        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire)
+        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire),
+        .pred_i(pred_bpf & v_btf), .pred_addr_i(pred_addr_btf)
     );
 endmodule

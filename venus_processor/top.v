@@ -29,17 +29,22 @@ module top(clk, reset, stall_i,
     wire [ADDR -1: 0] pc_pf;
     wire stall_fp;
 
-    // fetch - queue
-    wire v_fq;
-    wire stall_qf;
-    wire [WORD -1: 0] inst_fq;
-    wire [ADDR -1:0] pc_fq;
+    // fetch - branch target
+    wire v_btf;
+    wire [ADDR -1: 0] pc_btf;
+    wire [ADDR -1: 0] pred_addr_btf;
 
-    // queue - decode
-    wire v_qd;
-    wire stall_dq;
-    wire [WORD -1: 0] inst_qd;
-    wire [ADDR -1:0] pc_qd;
+    // branch prediction - fetch
+    wire v_bpf;
+    wire pred_bpf;
+    wire [W_BRID -1: 0] pred_id_bpf;
+
+    // fetch - decode
+    wire v_fd;
+    wire stall_df;
+    wire [WORD -1: 0] inst_fd;
+    wire [ADDR -1:0] pc_fd;
+    wire [W_BRID -1: 0] brid_fd;
 
     // decode - register
     wire w_reserve_dr;
@@ -63,6 +68,10 @@ module top(clk, reset, stall_i,
     wire [W_RD -1: 0] wb_r_er;
     wire [W_OPR -1: 0] result_er;
 
+    // execute - branch prediction
+    wire branch_ebp;
+    wire [W_BRID -1: 0] branch_id_ebp;
+
     execute_instruction exec(
         .clk(clk), .reset(reset),
         .v_i(v_de), .v_o(v_er),
@@ -79,10 +88,10 @@ module top(clk, reset, stall_i,
 
     decode_instruction decode(
         .clk(clk), .reset(reset),
-        .v_i(v_qd), .v_o(v_de),
-        .stall_i(stall_ed), .stall_o(stall_dq),
-        .inst_i(inst_qd),
-        .pc_i(pc_qd), .pc_o(pc_de),
+        .v_i(v_fd), .v_o(v_de),
+        .stall_i(stall_ed), .stall_o(stall_df),
+        .inst_i(inst_fd),
+        .pc_i(pc_fd), .pc_o(pc_de),
         .w_reserve_o(w_reserve_dr),
         .r0_o(r0_dr), .r1_o(r1_dr),
         .r_opr0_i(r_opr0_rd), .r_opr1_i(r_opr1_rd),
@@ -90,7 +99,9 @@ module top(clk, reset, stall_i,
         .reserved_i(reserved_rd),
         .opr0_o(opr0_de), .opr1_o(opr1_de),
         .d_info_o(d_info_de),
-        .wb_r_o(wb_r_de), .branch_i(branch_wire)
+        .wb_r_o(wb_r_de),
+        .brid_i(brid_fd), .brid_o(branch_id_ebp),
+        .branch_i(branch_wire)
     );
 
     g_reg_x16 register(
@@ -103,27 +114,26 @@ module top(clk, reset, stall_i,
         .result_i(result_er)
     );
 
-    queue_instruction queue(
+    branch_prediction branch_prediction(
         .clk(clk), .reset(reset),
-        .v_i(v_fq), .v_o(v_qd),
-        .stall_i(stall_dq), .stall_o(stall_qf),
-        .inst_i(inst_fq), .inst_o(inst_qd),
-        .pc_i(pc_fq), .pc_o(pc_qd),
-        .branch_i(branch_wire)
+        .v_i(v_de),
+        .branch_i(branch_wire), .branch_id_i(branch_id_ebp),
+        .pred_o(pred_bpf), .pred_id_o(pred_id_bpf)
     );
 
     branch_target branch_target(
-        .v_i(v_fq),
-        .pc_i(pc_fq),
-        .inst_i(inst_fq)
+        .v_i(v_fd), .v_o(v_btf),
+        .pc_i(pc_fd), .pc_o(pc_btf),
+        .inst_i(inst_fd), .pred_addr_o(pred_addr_btf)
     );
 
     fetch_instruction fetch(
         .clk(clk), .reset(reset),
-        .v_o(v_fq),
-        .stall_i(stall_qf), .stall_o(stall_fp),
-        .inst_i(inst_i), .inst_o(inst_fq),
-        .pc_i(pc_pf), .pc_o(pc_fq),
+        .v_o(v_fd),
+        .stall_i(stall_df), .stall_o(stall_fp),
+        .inst_i(inst_i), .inst_o(inst_fd),
+        .pc_i(pc_pf), .pc_o(pc_fd),
+        .brid_i(pred_id_bpf), .brid_o(brid_fd),
         .branch_i(branch_wire)
     );
 

@@ -10,6 +10,7 @@ module branch_prediction (
     input v_i;
     input table_i;
     input branch_i;
+    input [W_BRID -1: 0] branch_id_i;
     output [W_BRID -1: 0] pred_o;
     output [W_BRID -1: 0] pred_id_o;
 

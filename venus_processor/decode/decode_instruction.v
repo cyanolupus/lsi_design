@@ -10,7 +10,9 @@ module decode_instruction(clk, reset,
                 reserved_i,
                 opr0_o, opr1_o,
                 d_info_o,
-                wb_r_o, branch_i);
+                wb_r_o,
+                brid_i, brid_o,
+                branch_i);
 
     `include "../include/params.v"
     `include "../include/decode_inst.v"
@@ -31,6 +33,10 @@ module decode_instruction(clk, reset,
     output [W_OPR -1: 0] opr0_o, opr1_o;
     output [D_INFO -1: 0] d_info_o;
     output [W_RD -1: 0] wb_r_o;
+
+    input [W_BRID -1: 0] brid_i;
+    output [W_BRID -1: 0] brid_o;
+
     input branch_i;
 
     reg v_r;
@@ -38,6 +44,7 @@ module decode_instruction(clk, reset,
     reg [ADDR -1: 0] pc_r;
     reg [W_OPR -1: 0] r0_r, r1_r;
     reg [D_INFO -1: 0] d_info_r;
+    reg [W_BRID -1: 0] brid_r;
 
     wire [W_IMM -1: 0] imm;
     wire [D_INFO -1: 0] d_info;
@@ -58,6 +65,8 @@ module decode_instruction(clk, reset,
     assign stall_o = stall_i & v_r | reserved_i;
     assign v_o = v_r & (~stall_o | stall_i);
 
+    assign brid_o = brid_r;
+
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
             v_r <= 0;
@@ -66,6 +75,7 @@ module decode_instruction(clk, reset,
             r1_r <= 0;
             pc_r <= 0;
             d_info_r <= 0;
+            brid_r <= 0;
         end else begin
             if ((~stall_i | ~v_r) & ~reserved_i) begin
                 v_r <= v_i & ~branch_i;
@@ -74,6 +84,7 @@ module decode_instruction(clk, reset,
                 d_info_r <= d_info;
                 imm_r <= imm;
                 pc_r <= pc_i;
+                brid_r <= brid_i;
             end
         end
     end

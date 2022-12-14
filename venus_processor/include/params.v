@@ -7,6 +7,7 @@ parameter W_OPC = 7;
 parameter W_RD = 4;
 parameter W_IMM = 16;
 parameter W_CC = 3;
+parameter W_BRID = 2;
 
 parameter REG_S = 16;
 

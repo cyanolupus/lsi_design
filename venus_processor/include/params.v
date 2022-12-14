@@ -1,45 +1,45 @@
-parameter WORD = 32;
-parameter ADDR = 16;
-parameter LEN = 65535;
+parameter integer WORD = 32;
+parameter integer ADDR = 16;
+parameter integer LEN = 65535;
 
-parameter W_OPR = 32;
-parameter W_OPC = 7;
-parameter W_RD = 4;
-parameter W_IMM = 16;
-parameter W_CC = 3;
-parameter W_BRID = 2;
+parameter integer W_OPR = 32;
+parameter integer W_OPC = 7;
+parameter integer W_RD = 4;
+parameter integer W_IMM = 16;
+parameter integer W_CC = 3;
+parameter integer W_BRID = 2;
 
-parameter BTB_S = 4;
-parameter REG_S = 16;
+parameter integer BTB_S = 4;
+parameter integer REG_S = 16;
 
 // FLAGS
-parameter W_FLAGS = 4;
-parameter F_CRRY = 0;
-parameter F_ZERO = 1;
-parameter F_SIGN = 2;
-parameter F_OVRF = 3;
+parameter integer W_FLAGS = 4;
+parameter integer F_CRRY = 0;
+parameter integer F_ZERO = 1;
+parameter integer F_SIGN = 2;
+parameter integer F_OVRF = 3;
 
 // DECODE INFO
-parameter W_EXEC = 4;
-parameter W_SELECT = 3;
+parameter integer W_EXEC = 4;
+parameter integer W_SELECT = 3;
 
-parameter WRSV = 0;
-parameter SIGN = 1;
-parameter IMMF = 2;
-parameter LSTF = 3;
-parameter BRF = 4;
-parameter HLTF = 5;
+parameter integer WRSV = 0;
+parameter integer SIGN = 1;
+parameter integer IMMF = 2;
+parameter integer LSTF = 3;
+parameter integer BRF = 4;
+parameter integer HLTF = 5;
 
-parameter D_INFO = 6 + W_EXEC + W_SELECT;
+parameter integer D_INFO = 6 + W_EXEC + W_SELECT;
 
 // EXECUTOR
-parameter ADD = 4'b0000;
-parameter MUL = 4'b0001;
-parameter DIV = 4'b0010;
-parameter CMP = 4'b0011;
-parameter ABS = 4'b0100;
-parameter SHT = 4'b0110;
-parameter ROT = 4'b0111;
-parameter LGC = 4'b1000;
-parameter SET = 4'b1001;
-parameter NOP = 4'b1111;
+parameter integer ADD = 4'b0000;
+parameter integer MUL = 4'b0001;
+parameter integer DIV = 4'b0010;
+parameter integer CMP = 4'b0011;
+parameter integer ABS = 4'b0100;
+parameter integer SHT = 4'b0110;
+parameter integer ROT = 4'b0111;
+parameter integer LGC = 4'b1000;
+parameter integer SET = 4'b1001;
+parameter integer NOP = 4'b1111;

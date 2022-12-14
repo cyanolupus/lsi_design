@@ -63,6 +63,16 @@ module branch_target_buffer (
                         table3_r <= {pc_i, branch_addr_i};
                         v3_r <= 1;
                     end
+                    default: begin
+                        table0_r <= 0;
+                        table1_r <= 0;
+                        table2_r <= 0;
+                        table3_r <= 0;
+                        v0_r <= 0;
+                        v1_r <= 0;
+                        v2_r <= 0;
+                        v3_r <= 0;
+                    end
                 endcase
             end
         end

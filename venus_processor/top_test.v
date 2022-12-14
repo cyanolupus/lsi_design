@@ -100,19 +100,31 @@ module top_test();
             $display("|----------------------------------dump---------------------------------|");
             $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", top.register.data1, top.register.data2, top.register.data3, top.register.data4, top.register.data5, top.register.data6, top.register.data7, top.register.data8);
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|",
+                    top.register.data1, top.register.data2, top.register.data3, top.register.data4,
+                    top.register.data5, top.register.data6, top.register.data7, top.register.data8
+            );
             $display("|-----------------------------------------------------------------------|");
             $display("|      r8|      r9|      ra|      rb|      rc|      rd|      re|      rf|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", top.register.data9, top.register.data10, top.register.data11, top.register.data12, top.register.data13, top.register.data14, top.register.data15, top.register.data16);
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|",
+                    top.register.data9, top.register.data10, top.register.data11, top.register.data12,
+                    top.register.data13, top.register.data14, top.register.data15, top.register.data16
+            );
             $display("|-----------------------------------------------------------------------|");
             $display("|  mem[0]|  mem[1]|  mem[2]|  mem[3]|  mem[4]|  mem[5]|  mem[6]|  mem[7]|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[0], mem_rw.mem_bank[1], mem_rw.mem_bank[2], mem_rw.mem_bank[3], mem_rw.mem_bank[4], mem_rw.mem_bank[5], mem_rw.mem_bank[6], mem_rw.mem_bank[7]);
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|",
+                    mem_rw.mem_bank[0], mem_rw.mem_bank[1], mem_rw.mem_bank[2], mem_rw.mem_bank[3],
+                    mem_rw.mem_bank[4], mem_rw.mem_bank[5], mem_rw.mem_bank[6], mem_rw.mem_bank[7]
+            );
             $display("|-----------------------------------------------------------------------|");
             $display("|  mem[8]|  mem[9]|  mem[a]|  mem[b]|  mem[c]|  mem[d]|  mem[e]|  mem[f]|");
             $display("|--------|--------|--------|--------|--------|--------|--------|--------|");
-            $display("|%h|%h|%h|%h|%h|%h|%h|%h|", mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11], mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]);
+            $display("|%h|%h|%h|%h|%h|%h|%h|%h|",
+                    mem_rw.mem_bank[8], mem_rw.mem_bank[9], mem_rw.mem_bank[10], mem_rw.mem_bank[11],
+                    mem_rw.mem_bank[12], mem_rw.mem_bank[13], mem_rw.mem_bank[14], mem_rw.mem_bank[15]
+            );
             $display("|-----------------------------------------------------------------------|");
             $finish;
         end

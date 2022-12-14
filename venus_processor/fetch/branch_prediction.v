@@ -27,8 +27,8 @@ module branch_prediction (
 
     assign miss = branch_id_i[1] ^ branch_i;
 
-    assign prev = miss & &pred_r;
-    assign next = ~miss & ~|pred_r;
+    assign prev = miss & |pred_r;
+    assign next = ~miss & ~(&pred_r);
 
     assign pred_o = pred_r[1];
     assign pred_id_o = pred_r;

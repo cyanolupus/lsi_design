@@ -81,7 +81,11 @@ module execute_instruction (clk, reset,
     wire [W_EXEC -1: 0] executor = d_info_i[D_INFO -1:D_INFO - W_EXEC];
     wire [W_SELECT -1: 0] select = d_info_i[D_INFO - W_EXEC -1:D_INFO - W_EXEC - W_SELECT];
 
-    exec_ldst ldst_instance (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[LSTF] & select[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+    exec_ldst ldst_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_i), .immf_i(d_info_i[IMMF]), .imm_i(imm_i),
+        .stf_i(d_info_i[LSTF] & select[0] & v_i), .addr_o(ldst_addr_o),
+        .write_o(ldst_write_o), .data_o(ldst_data_o)
+    );
 
     exec_addx addx_instance (opr0_i, opr1_or_imm, result_addx, select[1:0], flags_r, flags_addx);
     exec_mulx mulx_instance (opr0_i, opr1_or_imm, result_mulx, flags_mulx);

@@ -72,7 +72,7 @@ module top_test();
         if (top.v_de) begin
             $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
             $write("|%d,%b", top.pc_pf, top.stall_fp);
-            $write("|%d,%b", top.pc_fd, top.stall_df);
+            $write("|%d,%b", top.pc_qd, top.stall_dq);
             $write("|%d|", top.pc_de);
             encode_inst(top.d_info_de);
             $write("|%d|%d|%d|", top.opr0_de, top.opr1_de, top.imm_de);
@@ -90,7 +90,7 @@ module top_test();
         end else begin
             $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
             $write("|%d,%b", top.pc_pf, top.stall_fp);
-            $write("|%d,%b", top.pc_fd, top.stall_df);
+            $write("|%d,%b", top.pc_qd, top.stall_dq);
             $write("|%d|   ", top.pc_de);
             $write("|          |          |     |          |   |");
             $display("");

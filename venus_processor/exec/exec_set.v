@@ -1,5 +1,5 @@
 module exec_set (opr0_i, imm_i, high_i, result_o);
-    `include "./include/params.v"
+    `include "../include/params.v"
     input [W_OPR -1: 0] opr0_i;
     input [W_IMM -1: 0] imm_i;
     input high_i;

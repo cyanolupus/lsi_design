@@ -1,5 +1,5 @@
 module exec_addx (opr0_i, opr1_i, result_o, select_i, flags_i, flags_o);
-    `include "./include/params.v"
+    `include "../include/params.v"
     input [W_OPR -1: 0] opr0_i, opr1_i;
     output [W_OPR -1: 0] result_o;
     input [1:0] select_i;

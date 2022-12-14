@@ -2,7 +2,7 @@
 
 module test_exec();
     parameter STEP = 10;
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     integer i;
 

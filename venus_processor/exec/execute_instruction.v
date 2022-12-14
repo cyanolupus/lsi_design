@@ -7,10 +7,11 @@ module execute_instruction (clk, reset,
                 ldst_addr_o, ldst_write_o, 
                 ldst_data_i, ldst_data_o,
                 result_o, wb_r_o, wb_o,
-                branch_o, branch_addr_o);
+                branch_o, branch_addr_o,
+                hlt_o);
 
-    `include "./include/params.v"
-    `include "./include/select4from16.v"
+    `include "../include/params.v"
+    `include "../include/select4from16.v"
 
     input  clk, reset;
     input  v_i;
@@ -34,6 +35,8 @@ module execute_instruction (clk, reset,
     output wb_o;
     output branch_o;
     output [ADDR -1: 0] branch_addr_o;
+
+    output hlt_o;
 
     reg v_r;
     reg [W_OPR -1: 0] result_r;
@@ -78,18 +81,52 @@ module execute_instruction (clk, reset,
     wire [W_EXEC -1: 0] executor = d_info_i[D_INFO -1:D_INFO - W_EXEC];
     wire [W_SELECT -1: 0] select = d_info_i[D_INFO - W_EXEC -1:D_INFO - W_EXEC - W_SELECT];
 
-    exec_ldst ldst (opr0_i, opr1_i, d_info_i[IMMF], imm_i, d_info_i[LSTF] & select[0] & v_i, ldst_addr_o, ldst_write_o, ldst_data_o);
+    exec_ldst ldst_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_i), .immf_i(d_info_i[IMMF]), .imm_i(imm_i),
+        .stf_i(d_info_i[LSTF] & select[0] & v_i), .addr_o(ldst_addr_o),
+        .write_o(ldst_write_o), .data_o(ldst_data_o)
+    );
 
-    exec_addx addx (opr0_i, opr1_or_imm, result_addx, select[1:0], flags_r, flags_addx);
-    exec_mulx mulx (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
-    exec_divx divx (opr0_i, opr1_or_imm, result_divx, flags_divx);
-    exec_cmp cmp (opr0_i, opr1_or_imm, flags_cmp);
-    exec_absx absx (opr1_or_imm, result_absx, flags_absx);
-    exec_shift shift (opr0_i, opr1_or_imm, result_shift, select[1:0], flags_shift);
-    exec_rotate rotate (opr0_i, opr1_or_imm, result_rotate, select[0], flags_rotate);
-    exec_logic logic (opr0_i, opr1_i, result_logic, select[1:0], flags_logic);
-    exec_set set (opr0_i, imm_i, select[0], result_set);
-    exec_branch branch (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select, flags_r, branch_o, branch_addr_o);
+    exec_addx addx_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_addx),
+        .select_i(select[1:0]), .flags_i(flags_r), .flags_o(flags_addx)
+    );
+    exec_mulx mulx_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm),
+        .result_o(result_mulx), .flags_o(flags_mulx)
+    );
+    exec_divx divx_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm),
+        .result_o(result_divx), .flags_o(flags_divx)
+    );
+    exec_cmp cmp_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .flags_o(flags_cmp)
+    );
+    exec_absx absx_instance (
+        .opr1_i(opr1_or_imm), .result_o(result_absx), .flags_o(flags_absx)
+    );
+    exec_shift shift_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_shift),
+        .select_i(select[1:0]), .flags_o(flags_shift)
+    );
+    exec_rotate rotate_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_rotate),
+        .right_i(select[0]), .flags_o(flags_rotate)
+    );
+    exec_logic logic_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_i), .result_o(result_logic),
+        .select_i(select[1:0]), .flags_o(flags_logic)
+    );
+    exec_set set_instance (
+        .opr0_i(opr0_i), .imm_i(imm_i),
+        .high_i(select[0]), .result_o(result_set)
+    );
+    exec_branch branch_instance (
+        .cc_i(cc), .opr1_i(opr1_or_imm_low),
+        .pc_i(pc_i), .brf_i(v_i & d_info_i[BRF]),
+        .select_i(select), .flags_i(flags_r),
+        .branch_o(branch_o), .branch_addr_o(branch_addr_o)
+    );
 
     // input [W_OPR -1: 0] data0, data1, data2, data3; // addx mulx divx cmp
     // input [W_OPR -1: 0] data4, data5, data6, data7; // absx none shift rotate
@@ -115,6 +152,7 @@ module execute_instruction (clk, reset,
     assign result_o = (ld_r)?ldst_data_i:result_r;
     assign wb_r_o = wb_r_r;
     assign wb_o = v_r & wb_r;
+    assign hlt_o = d_info_i[HLTF] & v_i;
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
@@ -132,10 +170,6 @@ module execute_instruction (clk, reset,
                 wb_r <= d_info_i[WRSV];
                 flags_r <= selected_flags;
                 ld_r <= ~select[0] & d_info_i[LSTF];
-
-                if (d_info_i[HLTF] & v_i) begin
-                    $finish;
-                end
             end
         end
     end

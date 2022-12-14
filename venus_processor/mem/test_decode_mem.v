@@ -4,7 +4,7 @@ module test_decode_mem(clk,
                     D,
                     Q);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk;
     input [ADDR -1: 0] A;
@@ -26,6 +26,6 @@ module test_decode_mem(clk,
     end
 
     initial begin
-        $readmemh("./mem/memfiles/test_decode_mem.dat", mem_bank);
+        $readmemh("../mem/memfiles/test_decode_mem.dat", mem_bank);
     end
 endmodule

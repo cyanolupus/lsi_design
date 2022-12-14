@@ -1,6 +1,6 @@
 module exec_cmp (opr0_i, opr1_i, flags_o);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
     input [W_OPR -1: 0] opr0_i, opr1_i;
     output [W_FLAGS -1: 0] flags_o;
 

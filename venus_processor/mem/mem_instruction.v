@@ -4,7 +4,7 @@ module mem_instruction(clk,
                     D,
                     Q);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk;
     input [ADDR -1: 0] A;
@@ -26,6 +26,6 @@ module mem_instruction(clk,
     end
 
     initial begin
-        $readmemh("./mem/memfiles/mem_instruction.dat", mem_bank);
+        $readmemh("../mem/memfiles/mem_instruction.dat", mem_bank);
     end
 endmodule

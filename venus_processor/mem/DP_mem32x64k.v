@@ -4,7 +4,7 @@ module DP_mem32x64k(clk,
                     D,
                     Q);
 
-    `include "./include/params.v"
+    `include "../include/params.v"
 
     input clk;
     input [ADDR -1: 0] A;
@@ -26,6 +26,6 @@ module DP_mem32x64k(clk,
     end
 
     initial begin
-        $readmemh("./mem/memfiles/mem.dat", mem_bank);
+        $readmemh("../mem/memfiles/mem.dat", mem_bank);
     end
 endmodule

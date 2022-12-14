@@ -6,9 +6,9 @@ module g_reg_x16(clk, reset,
                 wb_i, wb_r_i,
                 result_i);
 
-    `include "./include/params.v"
-    `include "./include/decode4to16.v"
-    `include "./include/select4from16.v"
+    `include "../include/params.v"
+    `include "../include/decode4to16.v"
+    `include "../include/select4from16.v"
 
     input clk, reset;
     input w_reserve_i;

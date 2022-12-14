@@ -95,7 +95,8 @@ module top_test();
             $display("");
         end
 
-        $display("br_v:%b,%d,%d", top.branch_target.v_o, top.branch_target.pred_addr_o, top.branch_target.pc_o);
+        $display("bt:%b,%d,%d", top.branch_target.v_o, top.branch_target.pred_addr_o, top.branch_target.pc_o);
+        $display("bp:%b,%d,%d", top.branch_prediction.pred_o, top.branch_prediction.pred_id_o);
 
         if (hlt_o) begin
             $display("|----------------------------------dump---------------------------------|");

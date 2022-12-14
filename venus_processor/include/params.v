@@ -9,6 +9,7 @@ parameter W_IMM = 16;
 parameter W_CC = 3;
 parameter W_BRID = 2;
 
+parameter BTB_S = 4;
 parameter REG_S = 16;
 
 // FLAGS

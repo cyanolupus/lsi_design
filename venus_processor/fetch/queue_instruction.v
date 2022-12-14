@@ -61,8 +61,6 @@ module queue_instruction (
                     data0_r <= {pc_i, inst_i};
                     v0_r <= v_i;
                 end
-                // $display("v0123: %b%b%b%b", v0_r, v1_r, v2_r, v3_r);
-                // $display("data0123: %h%h%h%h", data0_r, data1_r, data2_r, data3_r);
             end
         end
     end

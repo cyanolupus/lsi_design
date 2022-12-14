@@ -16,7 +16,7 @@ module exec_branch (cc_i, opr1_i,
     output [ADDR -1: 0] branch_addr_o;
 
     wire cond_en = select_i[2] & select_i[1];
-    wire c_cc = select3from8(cc_i, 
+    wire c_cc = select3from8(cc_i,
             1'b1, flags_i[F_ZERO], ~flags_i[F_SIGN], flags_i[F_SIGN], 
             flags_i[F_CRRY], flags_i[F_OVRF], 1'b0, 1'b0) & cond_en;
     wire c_select = select3from8(select_i,

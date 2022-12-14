@@ -88,7 +88,7 @@ module execute_instruction (clk, reset,
     );
 
     exec_addx addx_instance (
-        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_addx), 
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_addx),
         .select_i(select[1:0]), .flags_i(flags_r), .flags_o(flags_addx)
     );
     exec_mulx mulx_instance (

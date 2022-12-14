@@ -49,7 +49,7 @@ module top_test();
 
     initial begin
         $display("|--------------------------------------------------------------------|");
-        $display("|pc_p,st|pc_f,st|pc_q,st|pc_q,st| pc_d|OPC|      opr0|      opr1|  imm|    result|reg|");
+        $display("|pc_p,st|pc_f,st| pc_d|OPC|      opr0|      opr1|  imm|    result|reg|");
         clk = 1'b0;
         reset = 1'b0;
         inst_write = 1'b0;
@@ -78,10 +78,18 @@ module top_test();
             $write("|%d|%d|%d|", top.opr0_de, top.opr1_de, top.imm_de);
             if (top.d_info_de[WRSV]) begin
                 $write("%d| r%h|", top.exec.selected_result, top.wb_r_de);
-            end else if (top.d_info_de[BRF] & top.branch_wire) begin
-                $write("         o|   |");
-            end else if (top.d_info_de[BRF]) begin
-                $write("         x|   |");
+            end else if (top.branch_wire & top.v_ebp) begin
+                if (top.branch_ebp) begin
+                    $write("   (miss)o| %b|", top.branch_id_ebp);
+                end else begin
+                    $write("   (miss)x| %b|", top.branch_id_ebp);
+                end
+            end else if (top.v_ebp) begin
+                if (top.branch_ebp) begin
+                    $write("         o| %b|", top.branch_id_ebp);
+                end else begin
+                    $write("         x| %b|", top.branch_id_ebp);
+                end
             end else begin
                 $write("          |   |");
             end
@@ -95,9 +103,8 @@ module top_test();
             $display("");
         end
 
-        $display("bt:%b,%d,%d  bp:%b,%d", 
-            top.branch_target.v_o, top.branch_target.pred_addr_o, top.branch_target.pc_o,
-            top.branch_prediction.pred_o, top.branch_prediction.pred_id_o);
+        if (top.pred_bpf & top.v_btf)
+        $display("pred! -> %d / %d", top.pred_addr_btf, top.inst_addr_o);
 
         if (hlt_o) begin
             $display("|----------------------------------dump---------------------------------|");

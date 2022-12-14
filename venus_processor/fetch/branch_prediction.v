@@ -1,7 +1,7 @@
 module branch_prediction (
     clk, reset,
     v_i,
-    table_i, branch_i,
+    branch_i, branch_id_i,
     pred_o, pred_id_o);
 
     `include "../include/params.v"
@@ -17,13 +17,17 @@ module branch_prediction (
 
     wire [W_BRID -1: 0] pred_prev;
     wire [W_BRID -1: 0] pred_next;
+    wire miss;
     wire prev;
     wire next;
 
     assign pred_prev = pred_r - 1;
     assign pred_next = pred_r + 1;
-    assign prev = table_i ^ branch_i & &pred_r;
-    assign next = ~(table_i ^ branch_i) & ~|pred_r;
+
+    assign miss = branch_id_i[1] ^ branch_i;
+
+    assign prev = miss & &pred_r;
+    assign next = ~miss & ~|pred_r;
 
     assign pred_o = pred_r[1];
     assign pred_id_o = pred_r;

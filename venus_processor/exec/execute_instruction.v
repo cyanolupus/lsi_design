@@ -87,16 +87,46 @@ module execute_instruction (clk, reset,
         .write_o(ldst_write_o), .data_o(ldst_data_o)
     );
 
-    exec_addx addx_instance (opr0_i, opr1_or_imm, result_addx, select[1:0], flags_r, flags_addx);
-    exec_mulx mulx_instance (opr0_i, opr1_or_imm, result_mulx, flags_mulx);
-    exec_divx divx_instance (opr0_i, opr1_or_imm, result_divx, flags_divx);
-    exec_cmp cmp_instance (opr0_i, opr1_or_imm, flags_cmp);
-    exec_absx absx_instance (opr1_or_imm, result_absx, flags_absx);
-    exec_shift shift_instance (opr0_i, opr1_or_imm, result_shift, select[1:0], flags_shift);
-    exec_rotate rotate_instance (opr0_i, opr1_or_imm, result_rotate, select[0], flags_rotate);
-    exec_logic logic_instance (opr0_i, opr1_i, result_logic, select[1:0], flags_logic);
-    exec_set set_instance (opr0_i, imm_i, select[0], result_set);
-    exec_branch branch_instance (cc, opr1_or_imm_low, pc_i, v_i & d_info_i[BRF], select, flags_r, branch_o, branch_addr_o);
+    exec_addx addx_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_addx), 
+        .select_i(select[1:0]), .flags_i(flags_r), .flags_o(flags_addx)
+    );
+    exec_mulx mulx_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm),
+        .result_o(result_mulx), .flags_o(flags_mulx)
+    );
+    exec_divx divx_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm),
+        .result_o(result_divx), .flags_o(flags_divx)
+    );
+    exec_cmp cmp_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .flags_o(flags_cmp)
+    );
+    exec_absx absx_instance (
+        .opr1_i(opr1_or_imm), .result_o(result_absx), .flags_o(flags_absx)
+    );
+    exec_shift shift_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_shift),
+        .select_i(select[1:0]), .flags_o(flags_shift)
+    );
+    exec_rotate rotate_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_or_imm), .result_o(result_rotate),
+        .right_i(select[0]), .flags_o(flags_rotate)
+    );
+    exec_logic logic_instance (
+        .opr0_i(opr0_i), .opr1_i(opr1_i), .result_o(result_logic),
+        .select_i(select[1:0]), .flags_o(flags_logic)
+    );
+    exec_set set_instance (
+        .opr0_i(opr0_i), .imm_i(imm_i),
+        .high_i(select[0]), .result_o(result_set)
+    );
+    exec_branch branch_instance (
+        .cc_i(cc), .opr1_i(opr1_or_imm_low),
+        .pc_i(pc_i), .brf_i(v_i & d_info_i[BRF]),
+        .select_i(select), .flags_i(flags_r),
+        .branch_o(branch_o), .branch_addr_o(branch_addr_o)
+    );
 
     // input [W_OPR -1: 0] data0, data1, data2, data3; // addx mulx divx cmp
     // input [W_OPR -1: 0] data4, data5, data6, data7; // absx none shift rotate

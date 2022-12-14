@@ -11,6 +11,8 @@ module top(clk, reset, stall_i,
     input [WORD -1:0] inst_i;
     output [ADDR -1:0] inst_addr_o;
 
+    assign inst_addr_o = pc_pf;
+
     input [W_OPR -1:0] ldst_data_i;
     output [W_OPR -1:0] ldst_data_o;
     output [ADDR -1:0] ldst_addr_o;
@@ -61,8 +63,6 @@ module top(clk, reset, stall_i,
     wire [W_RD -1: 0] wb_r_er;
     wire [W_OPR -1: 0] result_er;
 
-    assign inst_addr_o = pc_pf;
-
     execute_instruction exec(
         .clk(clk), .reset(reset),
         .v_i(v_de), .v_o(v_er),
@@ -110,6 +110,12 @@ module top(clk, reset, stall_i,
         .inst_i(inst_fq), .inst_o(inst_qd),
         .pc_i(pc_fq), .pc_o(pc_qd),
         .branch_i(branch_wire)
+    );
+
+    branch_target branch_target(
+        .v_i(v_fq),
+        .pc_i(pc_fq),
+        .inst_i(inst_fq)
     );
 
     fetch_instruction fetch(

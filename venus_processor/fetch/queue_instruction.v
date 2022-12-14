@@ -21,8 +21,8 @@ module queue_instruction (
 
     input branch_i;
 
-    reg [ADDR + WORD -1: 0] data0_r, data1_r, data2_r, data3_r;
-    reg v0_r, v1_r, v2_r, v3_r;
+    reg [ADDR + WORD -1: 0] data0_r, data1_r;
+    reg v0_r, v1_r;
 
     wire stall_1;
     wire stall_0;

@@ -99,6 +99,8 @@ module top_test();
             $display("");
         end
 
+        $display("br_v:%d", top.branch_target.v_o);
+
         if (hlt_o) begin
             $display("|----------------------------------dump---------------------------------|");
             $display("|      r0|      r1|      r2|      r3|      r4|      r5|      r6|      r7|");

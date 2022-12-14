@@ -69,8 +69,8 @@ module top_test();
     end
 
     always @(posedge clk) begin
+        $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
         if (top.v_de) begin
-            $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
             $write("|%d,%b", top.pc_pf, top.stall_fp);
             $write("|%d,%b", top.pc_fd, top.stall_df);
             $write("|%d|", top.pc_de);
@@ -78,23 +78,33 @@ module top_test();
             $write("|%d|%d|%d|", top.opr0_de, top.opr1_de, top.imm_de);
             if (top.d_info_de[WRSV]) begin
                 $write("%d| r%h|", top.exec.selected_result, top.wb_r_de);
-            end else if (top.d_info_de[BRF] & top.branch_wire) begin
-                $write("         o|   |");
-            end else if (top.d_info_de[BRF]) begin
-                $write("         x|   |");
+            end else if (top.branch_wire & top.v_ebp) begin
+                if (top.branch_ebp) begin
+                    $write("   (miss)o| %b|", top.branch_id_ebp);
+                end else begin
+                    $write("   (miss)x| %b|", top.branch_id_ebp);
+                end
+            end else if (top.v_ebp) begin
+                if (top.branch_ebp) begin
+                    $write("         o| %b|", top.branch_id_ebp);
+                end else begin
+                    $write("         x| %b|", top.branch_id_ebp);
+                end
             end else begin
                 $write("          |   |");
             end
 
             $display("");
         end else begin
-            $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
             $write("|%d,%b", top.pc_pf, top.stall_fp);
             $write("|%d,%b", top.pc_fd, top.stall_df);
             $write("|%d|   ", top.pc_de);
             $write("|          |          |     |          |   |");
             $display("");
         end
+
+        if (top.pred_bpf & top.v_btf)
+        $display("pred! -> %d / %d", top.pred_addr_btf, top.inst_addr_o);
 
         if (hlt_o) begin
             $display("|----------------------------------dump---------------------------------|");

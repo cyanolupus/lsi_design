@@ -11,6 +11,8 @@ module top(clk, reset, stall_i,
     input [WORD -1:0] inst_i;
     output [ADDR -1:0] inst_addr_o;
 
+    assign inst_addr_o = (pred_bpf & v_btf)?pred_addr_btf:pc_pf;
+
     input [W_OPR -1:0] ldst_data_i;
     output [W_OPR -1:0] ldst_data_o;
     output [ADDR -1:0] ldst_addr_o;
@@ -21,17 +23,32 @@ module top(clk, reset, stall_i,
     wire stall_o;
     wire v_o;
     wire branch_wire;
+    wire [ADDR -1: 0] branch_addr_pre;
     wire [ADDR -1: 0] branch_addr_wire;
+
+    assign branch_wire = (branch_id_ebp[1] ^ branch_ebp) & v_ebp;
+    assign branch_addr_wire = (branch_ebp)?branch_addr_pre:pc_de+1;
 
     // pc - fetch
     wire [ADDR -1: 0] pc_pf;
     wire stall_fp;
+
+    // fetch - branch target
+    wire v_btf;
+    wire [ADDR -1: 0] pc_btf;
+    wire [ADDR -1: 0] pred_addr_btf;
+
+    // branch prediction - fetch
+    wire v_bpf;
+    wire pred_bpf;
+    wire [W_BRID -1: 0] pred_id_bpf;
 
     // fetch - decode
     wire v_fd;
     wire stall_df;
     wire [WORD -1: 0] inst_fd;
     wire [ADDR -1:0] pc_fd;
+    wire [W_BRID -1: 0] brid_fd;
 
     // decode - register
     wire w_reserve_dr;
@@ -55,7 +72,10 @@ module top(clk, reset, stall_i,
     wire [W_RD -1: 0] wb_r_er;
     wire [W_OPR -1: 0] result_er;
 
-    assign inst_addr_o = pc_pf;
+    // execute - branch prediction
+    wire v_ebp;
+    wire branch_ebp;
+    wire [W_BRID -1: 0] branch_id_ebp;
 
     execute_instruction exec(
         .clk(clk), .reset(reset),
@@ -67,8 +87,8 @@ module top(clk, reset, stall_i,
         .ldst_addr_o(ldst_addr_o), .ldst_write_o(ldst_write_o),
         .ldst_data_i(ldst_data_i), .ldst_data_o(ldst_data_o),
         .result_o(result_er), .wb_r_o(wb_r_er), .wb_o(wb_er),
-        .branch_o(branch_wire), .branch_addr_o(branch_addr_wire),
-        .hlt_o(hlt_o)
+        .branch_o(branch_ebp), .branch_addr_o(branch_addr_pre),
+        .hlt_o(hlt_o), .brf_o(v_ebp)
     );
 
     decode_instruction decode(
@@ -84,7 +104,9 @@ module top(clk, reset, stall_i,
         .reserved_i(reserved_rd),
         .opr0_o(opr0_de), .opr1_o(opr1_de),
         .d_info_o(d_info_de),
-        .wb_r_o(wb_r_de), .branch_i(branch_wire)
+        .wb_r_o(wb_r_de),
+        .brid_i(brid_fd), .brid_o(branch_id_ebp),
+        .branch_i(branch_wire)
     );
 
     g_reg_x16 register(
@@ -97,19 +119,35 @@ module top(clk, reset, stall_i,
         .result_i(result_er)
     );
 
+    branch_prediction branch_prediction(
+        .clk(clk), .reset(reset),
+        .v_i(v_ebp), .stall_i(stall_df),
+        .branch_i(branch_ebp), .branch_id_i(branch_id_ebp),
+        .pred_o(pred_bpf), .pred_id_o(pred_id_bpf)
+    );
+
+    branch_target branch_target(
+        .v_i(v_fd), .v_o(v_btf),
+        .pc_i(pc_fd), .pc_o(pc_btf),
+        .inst_i(inst_fd), .pred_addr_o(pred_addr_btf)
+    );
+
     fetch_instruction fetch(
         .clk(clk), .reset(reset),
         .v_o(v_fd),
         .stall_i(stall_df), .stall_o(stall_fp),
         .inst_i(inst_i), .inst_o(inst_fd),
         .pc_i(pc_pf), .pc_o(pc_fd),
-        .branch_i(branch_wire)
+        .brid_i(pred_id_bpf), .brid_o(brid_fd),
+        .branch_i(branch_wire),
+        .pred_i(pred_bpf & v_btf), .pred_addr_i(pred_addr_btf)
     );
 
     pc pc(
         .clk(clk), .reset(reset),
         .stall_i(stall_fp), .stall_o(stall_o),
         .pc_o(pc_pf),
-        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire)
+        .branch_i(branch_wire), .branch_addr_i(branch_addr_wire),
+        .pred_i(pred_bpf & v_btf), .pred_addr_i(pred_addr_btf)
     );
 endmodule

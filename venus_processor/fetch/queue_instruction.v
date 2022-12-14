@@ -1,4 +1,4 @@
-module queue (
+module queue_instruction (
     clk, reset,
     v_i, v_o,
     stall_i, stall_o,

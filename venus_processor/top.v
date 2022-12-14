@@ -103,7 +103,7 @@ module top(clk, reset, stall_i,
         .result_i(result_er)
     );
 
-    queue queue(
+    queue_instruction queue(
         .clk(clk), .reset(reset),
         .v_i(v_fq), .v_o(v_qd),
         .stall_i(stall_dq), .stall_o(stall_qf),

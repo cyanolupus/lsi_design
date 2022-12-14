@@ -121,7 +121,7 @@ module top(clk, reset, stall_i,
 
     branch_prediction branch_prediction(
         .clk(clk), .reset(reset),
-        .v_i(v_ebp),
+        .v_i(v_ebp), .stall_i(stall_df),
         .branch_i(branch_ebp), .branch_id_i(branch_id_ebp),
         .pred_o(pred_bpf), .pred_id_o(pred_id_bpf)
     );

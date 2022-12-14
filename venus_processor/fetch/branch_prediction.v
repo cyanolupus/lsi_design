@@ -1,6 +1,6 @@
 module branch_prediction (
     clk, reset,
-    v_i,
+    v_i, stall_i,
     branch_i, branch_id_i,
     pred_o, pred_id_o);
 
@@ -8,6 +8,7 @@ module branch_prediction (
 
     input clk, reset;
     input v_i;
+    input stall_i;
     input table_i;
     input branch_i;
     input [W_BRID -1: 0] branch_id_i;
@@ -30,7 +31,7 @@ module branch_prediction (
     assign prev = miss & |pred_r;
     assign next = ~miss & ~(&pred_r);
 
-    assign pred_o = pred_r[1];
+    assign pred_o = pred_r[1] & ~stall_i;
     assign pred_id_o = pred_r;
 
     always @(posedge clk or negedge reset) begin

@@ -35,7 +35,7 @@ module branch_prediction (
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
-            pred_r <= 2'b01;
+            pred_r <= 2'b11;
         end else begin
             if (v_i) begin
                 if (prev) begin

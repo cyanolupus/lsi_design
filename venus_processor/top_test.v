@@ -48,8 +48,8 @@ module top_test();
     end
 
     initial begin
-        $display("|--------------------------------------------------------------------|");
-        $display("|pc_p,st|pc_f,st| pc_d|OPC|      opr0|      opr1|  imm|    result|reg|");
+        $display("|------------------------------------------------------------------------------------|");
+        $display("|pc_p,st|pc_f,st|pc_q,st|pc_q,st| pc_d|OPC|      opr0|      opr1|  imm|    result|reg|");
         clk = 1'b0;
         reset = 1'b0;
         inst_write = 1'b0;
@@ -69,9 +69,11 @@ module top_test();
     end
 
     always @(posedge clk) begin
+        $display("|-------|-------|-------|-------|-----|---|----------|----------|-----|----------|---|");
         if (top.v_de) begin
-            $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
             $write("|%d,%b", top.pc_pf, top.stall_fp);
+            $write("|%d,%b", top.pc_fq, top.stall_qf);
+            $write("|%d,%b", top.queue.data1_r[ADDR + WORD - 1:WORD], top.queue.stall_1);
             $write("|%d,%b", top.pc_qd, top.stall_dq);
             $write("|%d|", top.pc_de);
             encode_inst(top.d_info_de);
@@ -88,8 +90,9 @@ module top_test();
 
             $display("");
         end else begin
-            $display("|-------|-------|-----|---|----------|----------|-----|----------|---|");
             $write("|%d,%b", top.pc_pf, top.stall_fp);
+            $write("|%d,%b", top.pc_fq, top.stall_qf);
+            $write("|%d,%b", top.queue.data1_r[ADDR + WORD - 1:WORD], top.queue.stall_1);
             $write("|%d,%b", top.pc_qd, top.stall_dq);
             $write("|%d|   ", top.pc_de);
             $write("|          |          |     |          |   |");

@@ -41,7 +41,7 @@ module test_shift_reg4;
     end
 
     always @(posedge clk) begin
-        $display("i = %h, dec = %b, set = %b, d = %h, q = %h", i, shift_reg4_instance.sin, shift_reg4_instance.set, shift_reg4_instance.d, shift_reg4_instance.q);
+        $display("i = %h, sin = %b, set = %b, d = %h, q = %h", i, shift_reg4_instance.sin, shift_reg4_instance.set, shift_reg4_instance.d, shift_reg4_instance.q);
     end
 endmodule
 
